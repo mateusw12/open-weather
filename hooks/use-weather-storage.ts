@@ -1,21 +1,14 @@
 "use client";
 
 import { useCallback, useState } from "react";
-
-const STORAGE_KEY = "open-weather:last-city";
+import { StorageService } from "@/libs/services/storage.service";
 
 export function useWeatherStorage(initialCity = "Sao Paulo") {
-  const [city, setCity] = useState(() => {
-    if (typeof window === "undefined") {
-      return initialCity;
-    }
-
-    return window.localStorage.getItem(STORAGE_KEY) ?? initialCity;
-  });
+  const [city, setCity] = useState(() => StorageService.getLastCity(initialCity));
 
   const saveCity = useCallback((value: string) => {
     setCity(value);
-    window.localStorage.setItem(STORAGE_KEY, value);
+    StorageService.setLastCity(value);
   }, []);
 
   return { city, saveCity };

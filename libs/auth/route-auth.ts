@@ -4,6 +4,7 @@ import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import type { ReactElement } from "react";
 import { authOptions } from "@/auth";
+import { AppRoute } from "@/libs/enums/app-route.enum";
 
 export type AuthenticatedSession = Session & {
   user: NonNullable<Session["user"]>;
@@ -27,7 +28,7 @@ export function withProtectedPage(renderer: ProtectedPageRenderer) {
     const session = await readSession();
 
     if (!session?.user) {
-      redirect("/login");
+      redirect(AppRoute.Login);
     }
 
     const authenticatedSession: AuthenticatedSession = {
@@ -44,7 +45,7 @@ export function withGuestPage(renderer: GuestPageRenderer) {
     const session = await readSession();
 
     if (session?.user) {
-      redirect("/");
+      redirect(AppRoute.Home);
     }
 
     return renderer();
