@@ -90,7 +90,11 @@ export default async function Home() {
       </TopBar>
 
       {current && forecast && !weatherError ? (
-        <WeatherShell city={defaultCity} current={current} forecast={forecast} />
+        <WeatherShell
+          initialCity={defaultCity}
+          initialCurrent={current}
+          initialForecast={forecast}
+        />
       ) : (
         <EmptyState>
           <h1>Configure as variáveis de ambiente</h1>
