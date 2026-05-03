@@ -56,13 +56,20 @@ export function ClimateInsights() {
       setErrorMessage(null);
 
       try {
-        const response = await fetch(`/api/weather/by-city?city=${encodeURIComponent(city)}`, {
-          cache: "no-store",
-        });
-        const data = (await response.json()) as WeatherPayload | { message: string };
+        const response = await fetch(
+          `/api/weather/by-city?city=${encodeURIComponent(city)}`,
+          {
+            cache: "no-store",
+          },
+        );
+        const data = (await response.json()) as
+          | WeatherPayload
+          | { message: string };
 
         if (!response.ok) {
-          throw new Error("message" in data ? data.message : "Erro ao buscar insights.");
+          throw new Error(
+            "message" in data ? data.message : "Erro ao buscar insights.",
+          );
         }
 
         if (isMounted) {
@@ -70,7 +77,9 @@ export function ClimateInsights() {
         }
       } catch (error) {
         if (isMounted) {
-          setErrorMessage(error instanceof Error ? error.message : "Erro inesperado.");
+          setErrorMessage(
+            error instanceof Error ? error.message : "Erro inesperado.",
+          );
         }
       } finally {
         if (isMounted) {
@@ -87,14 +96,21 @@ export function ClimateInsights() {
   }, [city]);
 
   const insights = payload
-    ? ClimateIntelligenceService.buildInsights(payload.current, payload.forecast)
+    ? ClimateIntelligenceService.buildInsights(
+        payload.current,
+        payload.forecast,
+      )
     : [];
   const nextHours = payload?.forecast.list.slice(0, 6) ?? [];
   const todayWindow = payload?.forecast.list.slice(0, 8) ?? [];
   const hasData = Boolean(payload);
   const rainWindows = nextHours.filter((item) => {
     const weather = item.weather[0]?.main.toLowerCase() ?? "";
-    return weather.includes("rain") || weather.includes("drizzle") || weather.includes("thunderstorm");
+    return (
+      weather.includes("rain") ||
+      weather.includes("drizzle") ||
+      weather.includes("thunderstorm")
+    );
   }).length;
   const minTemp = todayWindow.length
     ? Math.round(Math.min(...todayWindow.map((item) => item.main.temp)))
@@ -103,7 +119,8 @@ export function ClimateInsights() {
     ? Math.round(Math.max(...todayWindow.map((item) => item.main.temp)))
     : 0;
   const currentMain = payload?.current.weather[0]?.main ?? "Clear";
-  const currentDescription = payload?.current.weather[0]?.description ?? "clima estavel";
+  const currentDescription =
+    payload?.current.weather[0]?.description ?? "clima estavel";
 
   function handleSearch() {
     const trimmed = query.trim();
@@ -126,7 +143,8 @@ export function ClimateInsights() {
             {weatherEmoji(currentMain)} Insights em {payload?.city ?? city}
           </h1>
           <p>
-            Leitura simples do clima de agora e das proximas horas com dicas praticas para sua rotina.
+            Leitura simples do clima de agora e das proximas horas com dicas
+            praticas para sua rotina.
           </p>
         </HeroHeader>
 
@@ -141,19 +159,25 @@ export function ClimateInsights() {
             <small>
               <FaTemperatureHigh size={11} /> Agora
             </small>
-            <strong>{hasData ? `${Math.round(payload.current.main.temp)}°` : "--"}</strong>
+            <strong>
+              {hasData ? `${Math.round(payload?.current.main.temp ?? 0)}°` : "--"}
+            </strong>
           </HeroMetric>
           <HeroMetric>
             <small>
               <FaTint size={11} /> Umidade
             </small>
-            <strong>{hasData ? `${payload.current.main.humidity}%` : "--"}</strong>
+            <strong>
+              {hasData ? `${payload?.current.main.humidity ?? 0}%` : "--"}
+            </strong>
           </HeroMetric>
           <HeroMetric>
             <small>
               <FaWind size={11} /> Vento
             </small>
-            <strong>{hasData ? `${payload.current.wind.speed.toFixed(1)} m/s` : "--"}</strong>
+            <strong>
+              {hasData ? `${(payload?.current.wind.speed ?? 0).toFixed(1)} m/s` : "--"}
+            </strong>
           </HeroMetric>
         </HeroMetrics>
 
@@ -198,7 +222,11 @@ export function ClimateInsights() {
               <small>
                 <FaCloudRain size={12} /> Chuva nas proximas horas
               </small>
-              <strong>{rainWindows > 0 ? `${rainWindows} blocos com chuva` : "Sem sinal de chuva"}</strong>
+              <strong>
+                {rainWindows > 0
+                  ? `${rainWindows} blocos com chuva`
+                  : "Sem sinal de chuva"}
+              </strong>
               <p>Analise das proximas 6 janelas de previsao.</p>
             </SnapshotCard>
 
@@ -206,7 +234,9 @@ export function ClimateInsights() {
               <small>
                 <FaRegClock size={12} /> Condicao atual
               </small>
-              <strong>{weatherEmoji(currentMain)} {currentDescription}</strong>
+              <strong>
+                {weatherEmoji(currentMain)} {currentDescription}
+              </strong>
               <p>Base para decisões de deslocamento e atividades.</p>
             </SnapshotCard>
           </SnapshotGrid>
@@ -219,7 +249,9 @@ export function ClimateInsights() {
             {nextHours.map((item) => (
               <ForecastItem key={item.dt}>
                 <small>{formatForecastHour(item.dt_txt)}</small>
-                <strong>{weatherEmoji(item.weather[0]?.main ?? "clear")}</strong>
+                <strong>
+                  {weatherEmoji(item.weather[0]?.main ?? "clear")}
+                </strong>
                 <p>{Math.round(item.main.temp)}°</p>
               </ForecastItem>
             ))}
