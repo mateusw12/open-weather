@@ -2,7 +2,19 @@
 
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
-import { WiDaySunny, WiSunrise, WiSunset } from "react-icons/wi";
+import {
+  WiCloud,
+  WiDayCloudy,
+  WiDaySunny,
+  WiFog,
+  WiRain,
+  WiShowers,
+  WiSnow,
+  WiThunderstorm,
+  WiSunrise,
+  WiSunset,
+} from "react-icons/wi";
+import { FaMapMarkerAlt } from "react-icons/fa";
 import { useWeatherStorage } from "@/hooks/use-weather-storage";
 import type {
   CurrentWeatherDto,
@@ -13,10 +25,14 @@ import type {
 import {
   ActionButton,
   Daily,
+  DailyIcon,
   DailyRow,
   ErrorMessage,
   Hero,
+  HeroChip,
+  HeroChipGrid,
   Hourly,
+  HourlyIcon,
   HourlyItem,
   HourlyScroll,
   SearchButton,
@@ -108,6 +124,36 @@ function getDailyItems(list: ForecastListItemDto[]) {
 function cityLabel(city: GeocodingCityDto) {
   const parts = [city.name, city.state, city.country].filter(Boolean);
   return parts.join(", ");
+}
+
+function renderWeatherIcon(main: string, size = 24) {
+  const key = main.toLowerCase();
+
+  if (key.includes("thunderstorm")) {
+    return <WiThunderstorm size={size} />;
+  }
+
+  if (key.includes("snow")) {
+    return <WiSnow size={size} />;
+  }
+
+  if (key.includes("mist") || key.includes("haze") || key.includes("fog") || key.includes("smoke")) {
+    return <WiFog size={size} />;
+  }
+
+  if (key.includes("rain")) {
+    return <WiRain size={size} />;
+  }
+
+  if (key.includes("drizzle") || key.includes("shower")) {
+    return <WiShowers size={size} />;
+  }
+
+  if (key.includes("cloud")) {
+    return key.includes("few") ? <WiDayCloudy size={size} /> : <WiCloud size={size} />;
+  }
+
+  return <WiDaySunny size={size} />;
 }
 
 function getTempBarTone(temp: number) {
@@ -273,10 +319,29 @@ export function WeatherShell({
   return (
     <Shell $atmosphere={atmosphere}>
       <Hero>
-        <p>Agora em {payload.city}</p>
+        <p>
+          <FaMapMarkerAlt size={13} /> Agora em {payload.city}
+        </p>
         <h1>{Math.round(payload.current.main.temp)}°</h1>
         <p>{currentDescription}</p>
         <p>Sensacao termica de {Math.round(payload.current.main.feels_like)}°</p>
+
+        <HeroChipGrid>
+          <HeroChip>
+            <span>Semana</span>
+            <strong>
+              {minTemp}° / {maxTemp}°
+            </strong>
+          </HeroChip>
+          <HeroChip>
+            <span>Umidade</span>
+            <strong>{payload.current.main.humidity}%</strong>
+          </HeroChip>
+          <HeroChip>
+            <span>Vento</span>
+            <strong>{payload.current.wind.speed.toFixed(1)} m/s</strong>
+          </HeroChip>
+        </HeroChipGrid>
 
         <SearchRow>
           <SearchWrap
@@ -407,9 +472,10 @@ export function WeatherShell({
           </Stats>
 
           <Daily>
-            <h2>Proximos dias</h2>
-            {dailyItems.map((item) => (
-              <DailyRow key={item.dt}>
+            <h2>Durante a semana</h2>
+            {dailyItems.map((item, index) => (
+              <DailyRow key={item.dt} style={{ ["--delay" as string]: `${index * 70}ms` }}>
+                <DailyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</DailyIcon>
                 <span>{formatDay(item.dt_txt)}</span>
                 <span>{item.weather[0]?.main ?? "Sem dados"}</span>
                 <strong>{Math.round(item.main.temp)}°</strong>
@@ -420,8 +486,9 @@ export function WeatherShell({
           <Hourly>
             <h2>Proximas horas</h2>
             <HourlyScroll>
-              {nextHours.map((item) => (
-                <HourlyItem key={item.dt}>
+              {nextHours.map((item, index) => (
+                <HourlyItem key={item.dt} style={{ ["--delay" as string]: `${index * 55}ms` }}>
+                  <HourlyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</HourlyIcon>
                   <p>{formatHour(item.dt_txt)}</p>
                   <strong>{Math.round(item.main.temp)}°</strong>
                   <p>{item.weather[0]?.main ?? "Sem dados"}</p>

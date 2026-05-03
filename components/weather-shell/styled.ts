@@ -44,7 +44,9 @@ export const Hero = styled.section`
   border-radius: 34px;
   padding: 1.35rem;
   backdrop-filter: blur(16px);
-  background: linear-gradient(135deg, rgba(133, 186, 255, 0.22), rgba(255, 208, 151, 0.2));
+  background:
+    radial-gradient(circle at 82% 18%, rgba(255, 226, 176, 0.3), transparent 32%),
+    linear-gradient(135deg, rgba(133, 186, 255, 0.22), rgba(255, 208, 151, 0.2));
   border: 1px solid rgba(255, 255, 255, 0.38);
   box-shadow: 0 18px 55px rgba(10, 18, 44, 0.28);
   animation: enter 480ms ease both;
@@ -71,6 +73,9 @@ export const Hero = styled.section`
 
   p:first-of-type {
     margin-top: 0;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.35rem;
     font-size: 0.98rem;
     font-weight: 700;
     color: rgba(250, 253, 255, 0.92);
@@ -91,6 +96,37 @@ export const Hero = styled.section`
       opacity: 1;
       transform: translateY(0);
     }
+  }
+`;
+
+export const HeroChipGrid = styled.div`
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.55rem;
+
+  @media (min-width: 768px) {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+`;
+
+export const HeroChip = styled.article`
+  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.32);
+  background: rgba(255, 255, 255, 0.14);
+  padding: 0.62rem 0.7rem;
+  backdrop-filter: blur(6px);
+
+  span {
+    font-size: 0.77rem;
+    color: rgba(255, 251, 242, 0.9);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  strong {
+    display: block;
+    margin-top: 0.24rem;
+    font-size: 1.02rem;
   }
 `;
 
@@ -397,9 +433,24 @@ export const HourlyItem = styled.article`
   border: 1px solid rgba(255, 255, 255, 0.34);
   scroll-snap-align: start;
   transition: transform 180ms ease-in-out;
+  opacity: 0;
+  transform: translateY(10px);
+  animation: riseIn 420ms ease forwards;
+  animation-delay: var(--delay, 0ms);
 
   &:hover {
     transform: scale(1.02);
+  }
+
+  @keyframes riseIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
   }
 
   p {
@@ -412,6 +463,11 @@ export const HourlyItem = styled.article`
     margin-top: 0.4rem;
     font-size: 1.05rem;
   }
+`;
+
+export const HourlyIcon = styled.div`
+  margin-bottom: 0.2rem;
+  color: rgba(255, 245, 215, 0.95);
 `;
 
 export const Daily = styled.section`
@@ -434,13 +490,32 @@ export const Daily = styled.section`
 
 export const DailyRow = styled.div`
   display: grid;
-  grid-template-columns: 1fr auto auto;
+  grid-template-columns: auto 1fr auto auto;
   gap: 0.8rem;
   align-items: center;
   border-radius: 14px;
   padding: 0.55rem 0.72rem;
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.26);
+  opacity: 0;
+  transform: translateY(10px);
+  animation: riseIn 420ms ease forwards;
+  animation-delay: var(--delay, 0ms);
+
+  @keyframes riseIn {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+`;
+
+export const DailyIcon = styled.div`
+  color: rgba(255, 243, 205, 0.96);
 `;
 
 export const ErrorMessage = styled.p`
