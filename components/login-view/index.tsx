@@ -17,7 +17,7 @@ export function LoginView() {
     <Wrapper>
       <Card>
         <Brand>
-          <Image src="/logo/logo.png" alt="Open Weather logo" width={56} height={56} priority />
+          <Image src="/logo/logo.png" alt="Open Weather logo" width={74} height={74} priority />
           <h1>Open Weather</h1>
         </Brand>
         <p>Entre com sua conta para acessar uma previsão com visual imersivo.</p>
