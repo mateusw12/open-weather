@@ -291,6 +291,13 @@ export const Stats = styled.section`
     letter-spacing: 0.09em;
     color: rgba(255, 245, 223, 0.96);
   }
+
+  p[data-sub] {
+    color: rgba(255, 255, 255, 0.86);
+    line-height: 1.4;
+    margin-top: -0.12rem;
+    margin-bottom: 0.25rem;
+  }
 `;
 
 export const TodayHighlight = styled.section`
@@ -308,6 +315,13 @@ export const TodayHighlight = styled.section`
     text-transform: uppercase;
     letter-spacing: 0.09em;
     color: rgba(255, 245, 223, 0.96);
+  }
+
+  p[data-sub] {
+    color: rgba(255, 255, 255, 0.86);
+    line-height: 1.4;
+    margin-top: -0.12rem;
+    margin-bottom: 0.25rem;
   }
 `;
 
@@ -466,16 +480,24 @@ export const Hourly = styled.section`
     color: rgba(255, 245, 223, 0.96);
     margin-bottom: 0.8rem;
   }
+
+  p[data-sub] {
+    color: rgba(255, 255, 255, 0.86);
+    line-height: 1.4;
+    margin-top: -0.3rem;
+    margin-bottom: 0.75rem;
+  }
 `;
 
-export const HourlyScroll = styled.div`
+export const HourlyGraph = styled.div`
   display: grid;
   grid-auto-flow: column;
-  grid-auto-columns: minmax(92px, 1fr);
-  gap: 0.7rem;
+  grid-auto-columns: minmax(64px, 1fr);
+  gap: 0.55rem;
   overflow-x: auto;
   padding-bottom: 0.3rem;
-  scroll-snap-type: x mandatory;
+  align-items: end;
+  scroll-snap-type: x proximity;
   scroll-behavior: smooth;
 
   &::-webkit-scrollbar {
@@ -488,9 +510,9 @@ export const HourlyScroll = styled.div`
   }
 `;
 
-export const HourlyItem = styled.article`
-  padding: 0.9rem;
-  border-radius: 18px;
+export const HourlyGraphItem = styled.article`
+  padding: 0.65rem 0.55rem;
+  border-radius: 16px;
   background: rgba(255, 255, 255, 0.18);
   border: 1px solid rgba(255, 255, 255, 0.34);
   scroll-snap-align: start;
@@ -499,6 +521,9 @@ export const HourlyItem = styled.article`
   transform: translateY(10px);
   animation: riseIn 420ms ease forwards;
   animation-delay: var(--delay, 0ms);
+  display: grid;
+  justify-items: center;
+  gap: 0.35rem;
 
   &:hover {
     transform: scale(1.02);
@@ -516,23 +541,34 @@ export const HourlyItem = styled.article`
   }
 
   p {
-    font-size: 0.85rem;
+    font-size: 0.8rem;
     color: rgba(255, 255, 255, 0.88);
   }
 
   strong {
-    display: block;
-    margin-top: 0.4rem;
-    font-size: 1.05rem;
+    font-size: 0.9rem;
   }
 `;
 
-export const HourlyIcon = styled.div`
-  margin-bottom: 0.2rem;
-  color: rgba(255, 245, 215, 0.95);
+export const HourlyBarTrack = styled.div`
+  width: 26px;
+  height: 92px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: end;
+  overflow: hidden;
 `;
 
-export const Daily = styled.section`
+export const HourlyBarFill = styled.div<{ $height: number; $tone: string }>`
+  width: 100%;
+  height: ${({ $height }) => `${$height}%`};
+  border-radius: 999px;
+  background: ${({ $tone }) => $tone};
+`;
+
+export const WeeklySection = styled.section`
   border-radius: 28px;
   padding: 1rem;
   backdrop-filter: blur(12px);
@@ -548,15 +584,22 @@ export const Daily = styled.section`
     color: rgba(255, 245, 223, 0.96);
     margin-bottom: 0.2rem;
   }
+
+  p[data-sub] {
+    color: rgba(255, 255, 255, 0.86);
+    line-height: 1.4;
+    margin-top: -0.2rem;
+    margin-bottom: 0.5rem;
+  }
 `;
 
-export const DailyRow = styled.div`
+export const WeekRangeRow = styled.div`
   display: grid;
-  grid-template-columns: auto 1fr auto auto;
-  gap: 0.8rem;
+  grid-template-columns: 42px 40px 1fr 40px 28px;
+  gap: 0.55rem;
   align-items: center;
   border-radius: 14px;
-  padding: 0.55rem 0.72rem;
+  padding: 0.55rem 0.62rem;
   background: rgba(255, 255, 255, 0.16);
   border: 1px solid rgba(255, 255, 255, 0.26);
   opacity: 0;
@@ -574,10 +617,35 @@ export const DailyRow = styled.div`
       transform: translateY(0);
     }
   }
+
+  span,
+  small {
+    color: rgba(255, 255, 255, 0.9);
+    font-size: 0.82rem;
+  }
 `;
 
-export const DailyIcon = styled.div`
-  color: rgba(255, 243, 205, 0.96);
+export const WeekRangeTrack = styled.div`
+  width: 100%;
+`;
+
+export const WeekRangeBar = styled.div`
+  position: relative;
+  height: 10px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: rgba(255, 255, 255, 0.14);
+`;
+
+export const WeekRangeFill = styled.div<{ $offset: number; $width: number; $tone: string }>`
+  position: absolute;
+  left: ${({ $offset }) => `${$offset}%`};
+  width: ${({ $width }) => `${$width}%`};
+  min-width: 8%;
+  top: 0;
+  bottom: 0;
+  border-radius: 999px;
+  background: ${({ $tone }) => $tone};
 `;
 
 export const ErrorMessage = styled.p`

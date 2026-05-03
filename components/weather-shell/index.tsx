@@ -1,20 +1,6 @@
 "use client";
 
-import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
-import {
-  WiCloud,
-  WiDayCloudy,
-  WiDaySunny,
-  WiFog,
-  WiRain,
-  WiShowers,
-  WiSnow,
-  WiThunderstorm,
-  WiSunrise,
-  WiSunset,
-} from "react-icons/wi";
-import { FaMapMarkerAlt } from "react-icons/fa";
 import { useWeatherStorage } from "@/hooks/use-weather-storage";
 import type {
   CurrentWeatherDto,
@@ -23,42 +9,15 @@ import type {
   GeocodingCityDto,
 } from "@/libs/dto";
 import {
-  ActionButton,
-  Daily,
-  DailyIcon,
-  DailyRow,
-  ErrorMessage,
-  Hero,
-  HeroChip,
-  HeroChipGrid,
-  Hourly,
-  HourlyIcon,
-  HourlyItem,
-  HourlyScroll,
   RevealSection,
-  SearchButton,
-  SearchField,
-  SearchRow,
-  SearchWrap,
   Shell,
   SkeletonCard,
-  StatItem,
-  Stats,
-  SuggestionButton,
-  SuggestionList,
-  SunCycleCard,
-  SunCycleHeader,
-  SunCycleProgress,
-  SunCycleTrack,
-  SunMarker,
-  SunTimes,
-  TempColumnChart,
-  TempColumnFill,
-  TempColumnItem,
-  TempColumnTrack,
-  TodayHighlight,
-  TodayHighlightItem,
 } from "@/components/weather-shell/styled";
+import { HeroPanel } from "@/components/weather-shell/sections/hero-panel";
+import { HourlyGraphPanel } from "@/components/weather-shell/sections/hourly-graph-panel";
+import { QuickStatsPanel } from "@/components/weather-shell/sections/quick-stats-panel";
+import { TodayHighlightPanel } from "@/components/weather-shell/sections/today-highlight-panel";
+import { WeeklyRangePanel } from "@/components/weather-shell/sections/weekly-range-panel";
 
 type WeatherShellProps = {
   initialCity: string;
@@ -103,58 +62,53 @@ function mapAtmosphere(main: string) {
   return "radial-gradient(circle at 12% 20%, rgba(255, 215, 128, 0.55), transparent 34%), radial-gradient(circle at 82% 18%, rgba(131, 190, 255, 0.42), transparent 42%), linear-gradient(162deg, rgba(97, 146, 235, 0.9), rgba(93, 111, 226, 0.82))";
 }
 
-function getDailyItems(list: ForecastListItemDto[]) {
-  const byDay = new Map<string, ForecastListItemDto>();
+function getWeeklyRanges(list: ForecastListItemDto[]) {
+  const byDay = new Map<
+    string,
+    { min: number; max: number; representativeMain: string; representativeDt: string }
+  >();
 
   for (const item of list) {
     const day = item.dt_txt.slice(0, 10);
     const current = byDay.get(day);
+    const temp = item.main.temp;
+    const main = item.weather[0]?.main ?? "Clear";
 
-    if (!current || item.dt_txt.includes("12:00:00")) {
-      byDay.set(day, item);
+    if (!current) {
+      byDay.set(day, {
+        min: temp,
+        max: temp,
+        representativeMain: main,
+        representativeDt: item.dt_txt,
+      });
+      continue;
     }
 
-    if (byDay.size >= 5) {
+    const preferredRepresentative = item.dt_txt.includes("12:00:00");
+    byDay.set(day, {
+      min: Math.min(current.min, temp),
+      max: Math.max(current.max, temp),
+      representativeMain: preferredRepresentative ? main : current.representativeMain,
+      representativeDt: preferredRepresentative ? item.dt_txt : current.representativeDt,
+    });
+
+    if (byDay.size >= 6) {
       break;
     }
   }
 
-  return Array.from(byDay.values());
+  return Array.from(byDay.entries()).map(([day, value]) => ({
+    day,
+    min: Math.round(value.min),
+    max: Math.round(value.max),
+    main: value.representativeMain,
+    label: formatDay(`${day} 12:00:00`),
+  }));
 }
 
 function cityLabel(city: GeocodingCityDto) {
   const parts = [city.name, city.state, city.country].filter(Boolean);
   return parts.join(", ");
-}
-
-function renderWeatherIcon(main: string, size = 24) {
-  const key = main.toLowerCase();
-
-  if (key.includes("thunderstorm")) {
-    return <WiThunderstorm size={size} />;
-  }
-
-  if (key.includes("snow")) {
-    return <WiSnow size={size} />;
-  }
-
-  if (key.includes("mist") || key.includes("haze") || key.includes("fog") || key.includes("smoke")) {
-    return <WiFog size={size} />;
-  }
-
-  if (key.includes("rain")) {
-    return <WiRain size={size} />;
-  }
-
-  if (key.includes("drizzle") || key.includes("shower")) {
-    return <WiShowers size={size} />;
-  }
-
-  if (key.includes("cloud")) {
-    return key.includes("few") ? <WiDayCloudy size={size} /> : <WiCloud size={size} />;
-  }
-
-  return <WiDaySunny size={size} />;
 }
 
 function getTempBarTone(temp: number) {
@@ -195,8 +149,8 @@ export function WeatherShell({
   const currentDescription = payload.current.weather[0]?.description ?? "Condicao indisponivel";
 
   const nextHours = payload.forecast.list.slice(0, 10);
-  const dailyItems = getDailyItems(payload.forecast.list);
   const todayBlocks = payload.forecast.list.slice(0, 8);
+  const weeklyRanges = getWeeklyRanges(payload.forecast.list);
   const minTemp = Math.round(Math.min(...todayBlocks.map((item) => item.main.temp)));
   const maxTemp = Math.round(Math.max(...todayBlocks.map((item) => item.main.temp)));
   const sunrise = formatTime(payload.forecast.city.sunrise, payload.forecast.city.timezone);
@@ -206,6 +160,12 @@ export function WeatherShell({
   const nowUnix = payload.current.dt;
   const daylightProgress = clamp((nowUnix - sunriseUnix) / (sunsetUnix - sunriseUnix), 0, 1);
   const tempRange = Math.max(1, maxTemp - minTemp);
+  const nextHoursMin = Math.min(...nextHours.map((item) => item.main.temp));
+  const nextHoursMax = Math.max(...nextHours.map((item) => item.main.temp));
+  const nextHoursRange = Math.max(1, nextHoursMax - nextHoursMin);
+  const weekMin = Math.min(...weeklyRanges.map((item) => item.min));
+  const weekMax = Math.max(...weeklyRanges.map((item) => item.max));
+  const weekRange = Math.max(1, weekMax - weekMin);
 
   useEffect(() => {
     const nodes = document.querySelectorAll<HTMLElement>("[data-shell-reveal]");
@@ -341,79 +301,30 @@ export function WeatherShell({
 
   return (
     <Shell $atmosphere={atmosphere}>
-      <Hero>
-        <p>
-          <FaMapMarkerAlt size={13} /> Agora em {payload.city}
-        </p>
-        <h1>{Math.round(payload.current.main.temp)}°</h1>
-        <p>{currentDescription}</p>
-        <p>Sensacao termica de {Math.round(payload.current.main.feels_like)}°</p>
-
-        <HeroChipGrid>
-          <HeroChip>
-            <span>Semana</span>
-            <strong>
-              {minTemp}° / {maxTemp}°
-            </strong>
-          </HeroChip>
-          <HeroChip>
-            <span>Umidade</span>
-            <strong>{payload.current.main.humidity}%</strong>
-          </HeroChip>
-          <HeroChip>
-            <span>Vento</span>
-            <strong>{payload.current.wind.speed.toFixed(1)} m/s</strong>
-          </HeroChip>
-        </HeroChipGrid>
-
-        <SearchRow>
-          <SearchWrap
-            onSubmit={(event) => {
-              event.preventDefault();
-              void searchByCity(query);
-            }}
-          >
-            <SearchField
-              value={query}
-              onChange={(event) => setQuery(event.target.value)}
-              placeholder="Para onde vamos? Busque uma cidade"
-              aria-label="Buscar cidade"
-            />
-            <SearchButton type="submit" aria-label="Pesquisar">
-              <MagnifyingGlassIcon width={18} height={18} />
-            </SearchButton>
-
-            {suggestions.length > 0 && (
-              <SuggestionList>
-                {suggestions.map((item) => (
-                  <li key={`${item.lat}-${item.lon}`}>
-                    <SuggestionButton
-                      type="button"
-                      onClick={() => {
-                        const label = cityLabel(item);
-                        setQuery(label);
-                        void searchByCity(label);
-                      }}
-                    >
-                      {cityLabel(item)}
-                    </SuggestionButton>
-                  </li>
-                ))}
-              </SuggestionList>
-            )}
-          </SearchWrap>
-
-          <ActionButton type="button" onClick={() => void searchByCity(query)} disabled={isLoading}>
-            Ver clima
-          </ActionButton>
-
-          <ActionButton type="button" onClick={searchByCurrentLocation} disabled={isLocating}>
-            {isLocating ? "Buscando localizacao..." : "Usar minha localizacao"}
-          </ActionButton>
-        </SearchRow>
-
-        {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
-      </Hero>
+      <HeroPanel
+        city={payload.city}
+        temp={payload.current.main.temp}
+        description={currentDescription}
+        feelsLike={payload.current.main.feels_like}
+        minTemp={minTemp}
+        maxTemp={maxTemp}
+        humidity={payload.current.main.humidity}
+        windSpeed={payload.current.wind.speed}
+        query={query}
+        setQuery={setQuery}
+        suggestions={suggestions}
+        isLoading={isLoading}
+        isLocating={isLocating}
+        errorMessage={errorMessage}
+        onSubmitSearch={() => {
+          void searchByCity(query);
+        }}
+        onUseCurrentLocation={searchByCurrentLocation}
+        onPickSuggestion={(label) => {
+          void searchByCity(label);
+        }}
+        cityLabel={cityLabel}
+      />
 
       {isLoading ? (
         <>
@@ -424,108 +335,45 @@ export function WeatherShell({
       ) : (
         <>
           <RevealSection data-shell-reveal>
-            <TodayHighlight>
-              <h2>Resumo de hoje</h2>
-              <SunCycleCard>
-                <SunCycleHeader>
-                  <span>
-                    <WiSunrise size={22} /> Nascer {sunrise}
-                  </span>
-                  <span>
-                    <WiSunset size={22} /> Por {sunset}
-                  </span>
-                </SunCycleHeader>
-
-                <SunCycleTrack>
-                  <SunCycleProgress style={{ width: `${(daylightProgress * 100).toFixed(1)}%` }} />
-                  <SunMarker style={{ left: `${(daylightProgress * 100).toFixed(1)}%` }}>
-                    <WiDaySunny size={20} />
-                  </SunMarker>
-                </SunCycleTrack>
-
-                <SunTimes>
-                  <small>Min {minTemp}°</small>
-                  <small>Max {maxTemp}°</small>
-                </SunTimes>
-              </SunCycleCard>
-
-              <TempColumnChart>
-                {todayBlocks.map((item) => {
-                  const temp = Math.round(item.main.temp);
-                  const barHeight = 18 + ((temp - minTemp) / tempRange) * 82;
-                  const tone = getTempBarTone(temp);
-
-                  return (
-                    <TempColumnItem key={`temp-${item.dt}`}>
-                      <small>{formatHour(item.dt_txt)}</small>
-                      <TempColumnTrack>
-                        <TempColumnFill $height={barHeight} $tone={tone} />
-                      </TempColumnTrack>
-                      <strong>{temp}°</strong>
-                    </TempColumnItem>
-                  );
-                })}
-              </TempColumnChart>
-
-              <TodayHighlightItem>
-                <span>Media do periodo</span>
-                <strong>
-                  {Math.round(todayBlocks.reduce((sum, item) => sum + item.main.temp, 0) / todayBlocks.length)}°
-                </strong>
-              </TodayHighlightItem>
-            </TodayHighlight>
+            <QuickStatsPanel
+              feelsLike={payload.current.main.feels_like}
+              humidity={payload.current.main.humidity}
+              windSpeed={payload.current.wind.speed}
+              pressure={payload.current.main.pressure}
+            />
           </RevealSection>
 
           <RevealSection data-shell-reveal>
-            <Stats>
-              <h2>Resumo rapido</h2>
-              <StatItem>
-                <span>Sensação</span>
-                <strong>{Math.round(payload.current.main.feels_like)}°</strong>
-              </StatItem>
-              <StatItem>
-                <span>Umidade</span>
-                <strong>{payload.current.main.humidity}%</strong>
-              </StatItem>
-              <StatItem>
-                <span>Vento</span>
-                <strong>{payload.current.wind.speed.toFixed(1)} m/s</strong>
-              </StatItem>
-              <StatItem>
-                <span>Pressão</span>
-                <strong>{payload.current.main.pressure} hPa</strong>
-              </StatItem>
-            </Stats>
+            <TodayHighlightPanel
+              todayBlocks={todayBlocks}
+              minTemp={minTemp}
+              maxTemp={maxTemp}
+              tempRange={tempRange}
+              sunrise={sunrise}
+              sunset={sunset}
+              daylightProgress={daylightProgress}
+              formatHour={formatHour}
+              getTempBarTone={getTempBarTone}
+            />
           </RevealSection>
 
           <RevealSection data-shell-reveal>
-            <Daily>
-              <h2>Durante a semana</h2>
-              {dailyItems.map((item, index) => (
-                <DailyRow key={item.dt} style={{ ["--delay" as string]: `${index * 70}ms` }}>
-                  <DailyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</DailyIcon>
-                  <span>{formatDay(item.dt_txt)}</span>
-                  <span>{item.weather[0]?.main ?? "Sem dados"}</span>
-                  <strong>{Math.round(item.main.temp)}°</strong>
-                </DailyRow>
-              ))}
-            </Daily>
+            <WeeklyRangePanel
+              weeklyRanges={weeklyRanges}
+              weekMin={weekMin}
+              weekRange={weekRange}
+              getTempBarTone={getTempBarTone}
+            />
           </RevealSection>
 
           <RevealSection data-shell-reveal>
-            <Hourly>
-              <h2>Proximas horas</h2>
-              <HourlyScroll>
-                {nextHours.map((item, index) => (
-                  <HourlyItem key={item.dt} style={{ ["--delay" as string]: `${index * 55}ms` }}>
-                    <HourlyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</HourlyIcon>
-                    <p>{formatHour(item.dt_txt)}</p>
-                    <strong>{Math.round(item.main.temp)}°</strong>
-                    <p>{item.weather[0]?.main ?? "Sem dados"}</p>
-                  </HourlyItem>
-                ))}
-              </HourlyScroll>
-            </Hourly>
+            <HourlyGraphPanel
+              nextHours={nextHours}
+              nextHoursMin={nextHoursMin}
+              nextHoursRange={nextHoursRange}
+              formatHour={formatHour}
+              getTempBarTone={getTempBarTone}
+            />
           </RevealSection>
         </>
       )}
