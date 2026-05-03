@@ -5,6 +5,7 @@ import { FaTemperatureArrowDown, FaTemperatureArrowUp } from "react-icons/fa6";
 import { WiDayCloudy, WiDaySunny, WiHumidity, WiRain, WiSnow, WiStrongWind } from "react-icons/wi";
 import type { CurrentWeatherDto, ForecastDto } from "@/libs/dto";
 import { useWeatherStorage } from "@/hooks/use-weather-storage";
+import { formatForecastHour, formatTimeFromUnix } from "@/libs/utils/weather";
 import {
   Card,
   ErrorText,
@@ -25,17 +26,6 @@ type WeatherPayload = {
   current: CurrentWeatherDto;
   forecast: ForecastDto;
 };
-
-function formatTime(unix: number, timezoneSeconds: number) {
-  const date = new Date((unix + timezoneSeconds) * 1000);
-  const hours = String(date.getUTCHours()).padStart(2, "0");
-  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
-}
-
-function formatHour(dateText: string) {
-  return dateText.slice(11, 16);
-}
 
 function getThemeByWeather(main: string, temp: number) {
   const key = main.toLowerCase();
@@ -163,8 +153,8 @@ export function TodayOverview() {
   }
 
   const timezone = forecast.city.timezone;
-  const sunrise = formatTime(forecast.city.sunrise, timezone);
-  const sunset = formatTime(forecast.city.sunset, timezone);
+  const sunrise = formatTimeFromUnix(forecast.city.sunrise, timezone);
+  const sunset = formatTimeFromUnix(forecast.city.sunset, timezone);
   const todayTemps = forecast.list.slice(0, 8).map((item) => item.main.temp);
   const minTemp = Math.round(Math.min(...todayTemps));
   const maxTemp = Math.round(Math.max(...todayTemps));
@@ -238,7 +228,7 @@ export function TodayOverview() {
               return (
                 <HourlyItem key={item.dt} $tone={theme.hourlyTone} $borderTone={theme.borderTone}>
                   <HourIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 24)}</HourIcon>
-                  <p>{formatHour(item.dt_txt)}</p>
+                  <p>{formatForecastHour(item.dt_txt)}</p>
                   <strong>{Math.round(item.main.temp)}°</strong>
                   <p>{item.weather[0]?.description ?? "Sem dados"}</p>
                 </HourlyItem>

@@ -14,6 +14,7 @@ import { WiDaySunny } from "react-icons/wi";
 import { useWeatherStorage } from "@/hooks/use-weather-storage";
 import type { CurrentWeatherDto, ForecastDto } from "@/libs/dto";
 import { ClimateIntelligenceService } from "@/libs/services/climate-intelligence.service";
+import { formatForecastHour, weatherEmoji } from "@/libs/utils/weather";
 import {
   ForecastItem,
   ForecastStrip,
@@ -39,37 +40,6 @@ type WeatherPayload = {
   current: CurrentWeatherDto;
   forecast: ForecastDto;
 };
-
-function formatHour(dtTxt: string) {
-  const [, hourMinute] = dtTxt.split(" ");
-  return hourMinute?.slice(0, 5) ?? "--:--";
-}
-
-function weatherEmoji(main: string) {
-  const key = main.toLowerCase();
-
-  if (key.includes("thunderstorm")) {
-    return "⛈️";
-  }
-
-  if (key.includes("snow")) {
-    return "❄️";
-  }
-
-  if (key.includes("rain") || key.includes("drizzle")) {
-    return "🌧️";
-  }
-
-  if (key.includes("mist") || key.includes("haze") || key.includes("fog")) {
-    return "🌫️";
-  }
-
-  if (key.includes("cloud")) {
-    return "☁️";
-  }
-
-  return "☀️";
-}
 
 export function ClimateInsights() {
   const { city, saveCity } = useWeatherStorage("Sao Paulo");
@@ -248,7 +218,7 @@ export function ClimateInsights() {
           <ForecastStrip>
             {nextHours.map((item) => (
               <ForecastItem key={item.dt}>
-                <small>{formatHour(item.dt_txt)}</small>
+                <small>{formatForecastHour(item.dt_txt)}</small>
                 <strong>{weatherEmoji(item.weather[0]?.main ?? "clear")}</strong>
                 <p>{Math.round(item.main.temp)}°</p>
               </ForecastItem>
