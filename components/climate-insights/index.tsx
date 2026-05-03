@@ -1,17 +1,36 @@
 "use client";
 
 import { useEffect, useState } from "react";
+import {
+  FaCloudRain,
+  FaLightbulb,
+  FaMapMarkerAlt,
+  FaRegClock,
+  FaTemperatureHigh,
+  FaTint,
+  FaWind,
+} from "react-icons/fa";
+import { WiDaySunny } from "react-icons/wi";
 import { useWeatherStorage } from "@/hooks/use-weather-storage";
 import type { CurrentWeatherDto, ForecastDto } from "@/libs/dto";
 import { ClimateIntelligenceService } from "@/libs/services/climate-intelligence.service";
 import {
+  ForecastItem,
+  ForecastStrip,
   Grid,
   Hero,
+  HeroBadge,
+  HeroHeader,
+  HeroMetric,
+  HeroMetrics,
   InsightCard,
   InsightsShell,
+  SectionTitle,
   SearchButton,
   SearchInput,
   SearchRow,
+  SnapshotCard,
+  SnapshotGrid,
   StatusText,
 } from "@/components/climate-insights/styled";
 
@@ -20,6 +39,37 @@ type WeatherPayload = {
   current: CurrentWeatherDto;
   forecast: ForecastDto;
 };
+
+function formatHour(dtTxt: string) {
+  const [, hourMinute] = dtTxt.split(" ");
+  return hourMinute?.slice(0, 5) ?? "--:--";
+}
+
+function weatherEmoji(main: string) {
+  const key = main.toLowerCase();
+
+  if (key.includes("thunderstorm")) {
+    return "⛈️";
+  }
+
+  if (key.includes("snow")) {
+    return "❄️";
+  }
+
+  if (key.includes("rain") || key.includes("drizzle")) {
+    return "🌧️";
+  }
+
+  if (key.includes("mist") || key.includes("haze") || key.includes("fog")) {
+    return "🌫️";
+  }
+
+  if (key.includes("cloud")) {
+    return "☁️";
+  }
+
+  return "☀️";
+}
 
 export function ClimateInsights() {
   const { city, saveCity } = useWeatherStorage("Sao Paulo");
@@ -69,6 +119,21 @@ export function ClimateInsights() {
   const insights = payload
     ? ClimateIntelligenceService.buildInsights(payload.current, payload.forecast)
     : [];
+  const nextHours = payload?.forecast.list.slice(0, 6) ?? [];
+  const todayWindow = payload?.forecast.list.slice(0, 8) ?? [];
+  const hasData = Boolean(payload);
+  const rainWindows = nextHours.filter((item) => {
+    const weather = item.weather[0]?.main.toLowerCase() ?? "";
+    return weather.includes("rain") || weather.includes("drizzle") || weather.includes("thunderstorm");
+  }).length;
+  const minTemp = todayWindow.length
+    ? Math.round(Math.min(...todayWindow.map((item) => item.main.temp)))
+    : 0;
+  const maxTemp = todayWindow.length
+    ? Math.round(Math.max(...todayWindow.map((item) => item.main.temp)))
+    : 0;
+  const currentMain = payload?.current.weather[0]?.main ?? "Clear";
+  const currentDescription = payload?.current.weather[0]?.description ?? "clima estavel";
 
   function handleSearch() {
     const trimmed = query.trim();
@@ -83,8 +148,44 @@ export function ClimateInsights() {
   return (
     <InsightsShell>
       <Hero>
-        <h1>Insights do clima em {payload?.city ?? city}</h1>
-        <p>Transformamos dados em recomendacoes praticas para o seu dia.</p>
+        <HeroHeader>
+          <HeroBadge>
+            <FaLightbulb size={13} /> Inteligencia do clima
+          </HeroBadge>
+          <h1>
+            {weatherEmoji(currentMain)} Insights em {payload?.city ?? city}
+          </h1>
+          <p>
+            Leitura simples do clima de agora e das proximas horas com dicas praticas para sua rotina.
+          </p>
+        </HeroHeader>
+
+        <HeroMetrics>
+          <HeroMetric>
+            <small>
+              <FaMapMarkerAlt size={11} /> Cidade
+            </small>
+            <strong>{payload?.city ?? city}</strong>
+          </HeroMetric>
+          <HeroMetric>
+            <small>
+              <FaTemperatureHigh size={11} /> Agora
+            </small>
+            <strong>{hasData ? `${Math.round(payload.current.main.temp)}°` : "--"}</strong>
+          </HeroMetric>
+          <HeroMetric>
+            <small>
+              <FaTint size={11} /> Umidade
+            </small>
+            <strong>{hasData ? `${payload.current.main.humidity}%` : "--"}</strong>
+          </HeroMetric>
+          <HeroMetric>
+            <small>
+              <FaWind size={11} /> Vento
+            </small>
+            <strong>{hasData ? `${payload.current.wind.speed.toFixed(1)} m/s` : "--"}</strong>
+          </HeroMetric>
+        </HeroMetrics>
 
         <SearchRow
           onSubmit={(event) => {
@@ -105,6 +206,60 @@ export function ClimateInsights() {
       </Hero>
 
       {errorMessage && <StatusText>{errorMessage}</StatusText>}
+
+      {!errorMessage && hasData && (
+        <>
+          <SectionTitle>
+            <WiDaySunny size={20} /> Panorama rapido
+          </SectionTitle>
+
+          <SnapshotGrid>
+            <SnapshotCard>
+              <small>
+                <FaTemperatureHigh size={12} /> Faixa de hoje
+              </small>
+              <strong>
+                {minTemp}° / {maxTemp}°
+              </strong>
+              <p>Variacao prevista para o periodo mais proximo.</p>
+            </SnapshotCard>
+
+            <SnapshotCard>
+              <small>
+                <FaCloudRain size={12} /> Chuva nas proximas horas
+              </small>
+              <strong>{rainWindows > 0 ? `${rainWindows} blocos com chuva` : "Sem sinal de chuva"}</strong>
+              <p>Analise das proximas 6 janelas de previsao.</p>
+            </SnapshotCard>
+
+            <SnapshotCard>
+              <small>
+                <FaRegClock size={12} /> Condicao atual
+              </small>
+              <strong>{weatherEmoji(currentMain)} {currentDescription}</strong>
+              <p>Base para decisões de deslocamento e atividades.</p>
+            </SnapshotCard>
+          </SnapshotGrid>
+
+          <SectionTitle>
+            <FaRegClock size={16} /> Proximas horas
+          </SectionTitle>
+
+          <ForecastStrip>
+            {nextHours.map((item) => (
+              <ForecastItem key={item.dt}>
+                <small>{formatHour(item.dt_txt)}</small>
+                <strong>{weatherEmoji(item.weather[0]?.main ?? "clear")}</strong>
+                <p>{Math.round(item.main.temp)}°</p>
+              </ForecastItem>
+            ))}
+          </ForecastStrip>
+        </>
+      )}
+
+      <SectionTitle>
+        <FaLightbulb size={16} /> Recomendações para você
+      </SectionTitle>
 
       <Grid>
         {insights.map((insight) => (
