@@ -3,7 +3,7 @@ import type { Session } from "next-auth";
 import { redirect } from "next/navigation";
 import { NextResponse } from "next/server";
 import type { ReactElement } from "react";
-import { authOptions } from "@/auth";
+import { authOptions } from "@/libs/auth/auth";
 import { AppRoute } from "@/libs/enums/app-route.enum";
 
 export type AuthenticatedSession = Session & {
