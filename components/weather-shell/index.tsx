@@ -2,18 +2,11 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 import { useWeatherStorage } from "@/hooks/use-weather-storage";
-import type {
-  CurrentWeatherDto,
-  ForecastDto,
-  GeocodingCityDto,
-} from "@/libs/dto";
+import type { GeocodingCityDto } from "@/libs/dto";
 import {
   cityLabel,
-  clamp,
   formatForecastHour,
-  formatTimeFromUnix,
   getTempBarTone,
-  getWeeklyRanges,
   mapAtmosphere,
 } from "@/libs/utils/weather";
 import {
