@@ -17,6 +17,11 @@ const spaceMono = Space_Mono({
 export const metadata: Metadata = {
   title: "Open Weather",
   description: "Weather app premium com Next.js, Emotion e OpenWeatherMap.",
+  icons: {
+    icon: [{ url: "/logo/logo.png", type: "image/png" }],
+    shortcut: [{ url: "/logo/logo.png", type: "image/png" }],
+    apple: [{ url: "/logo/logo.png", type: "image/png" }],
+  },
 };
 
 export default function RootLayout({

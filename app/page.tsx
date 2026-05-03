@@ -1,10 +1,7 @@
-import Image from "next/image";
-import Link from "next/link";
 import type { AuthenticatedSession } from "@/libs/auth/route-auth";
 import { withProtectedPage } from "@/libs/auth/route-auth";
-import { SignOutButton } from "@/components/sign-out-button";
 import { WeatherShell } from "@/components/weather-shell";
-import { AppRoute } from "@/libs/enums/app-route.enum";
+import { TopBar } from "@/components/top-bar";
 import { WeatherService } from "@/libs/services/weather.service";
 
 async function HomePage(session: AuthenticatedSession) {
@@ -24,59 +21,7 @@ async function HomePage(session: AuthenticatedSession) {
 
   return (
     <div style={{ minHeight: "100dvh" }}>
-      <header
-        style={{
-          width: "min(1220px, 100%)",
-          margin: "0 auto",
-          padding: "1rem 1rem 0.4rem",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          color: "rgba(238, 247, 255, 0.92)",
-          fontSize: "0.95rem",
-          position: "relative",
-          zIndex: 4,
-        }}
-      >
-        <div
-          style={{
-            display: "flex",
-            alignItems: "center",
-            gap: "0.75rem",
-            border: "1px solid rgba(255, 255, 255, 0.28)",
-            borderRadius: "999px",
-            padding: "0.45rem 0.7rem",
-            backdropFilter: "blur(12px)",
-            background: "linear-gradient(120deg, rgba(120, 179, 255, 0.23), rgba(255, 194, 106, 0.15))",
-          }}
-        >
-          <Image src="/logo/logo.png" alt="Open Weather logo" width={34} height={34} priority />
-          <div>
-            <p style={{ fontWeight: 700 }}>Open Weather</p>
-            <p style={{ fontSize: "0.8rem", color: "rgba(238, 247, 255, 0.78)" }}>
-              Ola, {session.user.email ?? "usuario"}
-            </p>
-          </div>
-        </div>
-        <div style={{ display: "flex", alignItems: "center", gap: "0.7rem", flexWrap: "wrap" }}>
-          <Link
-            href={AppRoute.About}
-            style={{
-              color: "rgba(242, 243, 255, 0.95)",
-              fontWeight: 600,
-              textDecoration: "none",
-              border: "1px solid rgba(255, 255, 255, 0.3)",
-              borderRadius: "999px",
-              padding: "0.5rem 0.85rem",
-              backdropFilter: "blur(8px)",
-              background: "rgba(255, 255, 255, 0.12)",
-            }}
-          >
-            Sobre
-          </Link>
-          <SignOutButton />
-        </div>
-      </header>
+      <TopBar userEmail={session.user.email} showSignOut />
 
       {current && forecast && !weatherError ? (
         <WeatherShell
