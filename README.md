@@ -34,5 +34,5 @@ npm run dev
 - Integracao com OpenWeather para clima atual e previsao 5 dias/3h
 - Busca por cidade com sugestoes
 - Botao de geolocalizacao
-- Persistencia da ultima cidade pesquisada no navegador
+- Persistencia da ultima cidade pesquisada no navegador via storage service
 - Layout responsivo com glassmorphism e animacoes suaves

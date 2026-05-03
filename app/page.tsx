@@ -4,7 +4,7 @@ import type { AuthenticatedSession } from "@/libs/auth/route-auth";
 import { withProtectedPage } from "@/libs/auth/route-auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import { WeatherShell } from "@/components/weather-shell";
-import { WeatherService } from "@/libs/services/weather-service";
+import { WeatherService } from "@/libs/services/weather.service";
 
 async function HomePage(session: AuthenticatedSession) {
   const defaultCity = "Sao Paulo";

@@ -1,9 +1,6 @@
-"use client";
-
 import styled from "@emotion/styled";
-import { signOut } from "next-auth/react";
 
-const Button = styled.button`
+export const Button = styled.button`
   border: 1px solid var(--ow-border);
   background: rgba(33, 69, 125, 0.42);
   color: var(--ow-text);
@@ -17,11 +14,3 @@ const Button = styled.button`
     background: rgba(242, 151, 76, 0.3);
   }
 `;
-
-export function SignOutButton() {
-  return (
-    <Button type="button" onClick={() => void signOut({ callbackUrl: "/login" })}>
-      Sair
-    </Button>
-  );
-}

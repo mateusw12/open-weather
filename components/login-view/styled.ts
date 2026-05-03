@@ -1,19 +1,14 @@
-"use client";
-
 import styled from "@emotion/styled";
-import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import Image from "next/image";
 import Link from "next/link";
-import { signIn } from "next-auth/react";
 
-const Wrapper = styled.main`
+export const Wrapper = styled.main`
   min-height: 100dvh;
   display: grid;
   place-items: center;
   padding: 1rem;
 `;
 
-const Card = styled.section`
+export const Card = styled.section`
   width: min(460px, 100%);
   padding: 1.4rem;
   border-radius: 26px;
@@ -37,7 +32,7 @@ const Card = styled.section`
   }
 `;
 
-const Brand = styled.div`
+export const Brand = styled.div`
   display: flex;
   align-items: center;
   gap: 0.85rem;
@@ -48,13 +43,13 @@ const Brand = styled.div`
   }
 `;
 
-const ProviderList = styled.div`
+export const ProviderList = styled.div`
   margin-top: 1.4rem;
   display: grid;
   gap: 0.75rem;
 `;
 
-const AboutLink = styled(Link)`
+export const AboutLink = styled(Link)`
   margin-top: 0.95rem;
   display: inline-flex;
   color: rgba(110, 198, 189, 0.95);
@@ -66,7 +61,7 @@ const AboutLink = styled(Link)`
   }
 `;
 
-const ProviderButton = styled.button`
+export const ProviderButton = styled.button`
   width: 100%;
   border: 1px solid var(--ow-border);
   border-radius: 15px;
@@ -86,36 +81,3 @@ const ProviderButton = styled.button`
     background: rgba(38, 125, 170, 0.44);
   }
 `;
-
-export function LoginView() {
-  return (
-    <Wrapper>
-      <Card>
-        <Brand>
-          <Image src="/logo/logo.png" alt="Open Weather logo" width={56} height={56} priority />
-          <h1>Open Weather</h1>
-        </Brand>
-        <p>Entre com sua conta para acessar uma previsão com visual imersivo.</p>
-
-        <ProviderList>
-          <ProviderButton
-            type="button"
-            onClick={() => void signIn("google", { callbackUrl: "/" })}
-          >
-            Continuar com Google
-          </ProviderButton>
-
-          <ProviderButton
-            type="button"
-            onClick={() => void signIn("github", { callbackUrl: "/" })}
-          >
-            <GitHubLogoIcon width={18} height={18} />
-            Continuar com GitHub
-          </ProviderButton>
-        </ProviderList>
-
-        <AboutLink href="/about">Conhecer a aplicação</AboutLink>
-      </Card>
-    </Wrapper>
-  );
-}
