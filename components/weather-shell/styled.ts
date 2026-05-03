@@ -35,7 +35,18 @@ export const Shell = styled.main<{ $atmosphere: string }>`
 
   @media (min-width: 768px) {
     padding: 1.25rem 1.35rem 2.2rem;
-    grid-template-columns: 1.24fr 0.76fr;
+    grid-template-columns: 1fr;
+  }
+`;
+
+export const RevealSection = styled.section`
+  opacity: 0;
+  transform: translateY(18px);
+  transition: opacity 560ms ease, transform 560ms ease;
+
+  &.is-visible {
+    opacity: 1;
+    transform: translateY(0);
   }
 `;
 
@@ -50,6 +61,20 @@ export const Hero = styled.section`
   border: 1px solid rgba(255, 255, 255, 0.38);
   box-shadow: 0 18px 55px rgba(10, 18, 44, 0.28);
   animation: enter 480ms ease both;
+  overflow: hidden;
+
+  &::after {
+    content: "";
+    position: absolute;
+    inset: auto -12% -45% auto;
+    width: 46%;
+    aspect-ratio: 1;
+    border-radius: 999px;
+    background: radial-gradient(circle, rgba(255, 203, 132, 0.34), transparent 64%);
+    filter: blur(16px);
+    animation: floatGlow 4.2s ease-in-out infinite;
+    pointer-events: none;
+  }
 
   @media (min-width: 768px) {
     padding: 2.2rem;
@@ -63,12 +88,16 @@ export const Hero = styled.section`
     font-weight: 800;
     color: #ffffff;
     text-shadow: 0 10px 28px rgba(11, 20, 38, 0.2);
+    animation: heroRise 520ms ease both;
+    animation-delay: 80ms;
   }
 
   p {
     margin-top: 0.5rem;
     color: rgba(255, 255, 255, 0.92);
     max-width: 42ch;
+    animation: heroRise 520ms ease both;
+    animation-delay: 120ms;
   }
 
   p:first-of-type {
@@ -95,6 +124,32 @@ export const Hero = styled.section`
     to {
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+
+  @keyframes heroRise {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  @keyframes floatGlow {
+    0% {
+      transform: translateY(0px);
+      opacity: 0.6;
+    }
+    50% {
+      transform: translateY(-10px);
+      opacity: 0.85;
+    }
+    100% {
+      transform: translateY(0px);
+      opacity: 0.6;
     }
   }
 `;
@@ -319,41 +374,48 @@ export const SunTimes = styled.div`
   }
 `;
 
-export const TempBarChart = styled.div`
+export const TempColumnChart = styled.div`
   display: grid;
-  gap: 0.45rem;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(48px, 1fr);
+  gap: 0.5rem;
+  align-items: end;
+  overflow-x: auto;
+  padding: 0.2rem 0.1rem 0.35rem;
 `;
 
-export const TempBarRow = styled.div`
+export const TempColumnItem = styled.div`
   display: grid;
-  grid-template-columns: 54px 1fr auto;
-  gap: 0.55rem;
-  align-items: center;
+  justify-items: center;
+  gap: 0.35rem;
 
-  span {
+  small {
     color: rgba(255, 255, 255, 0.88);
-    font-size: 0.82rem;
+    font-size: 0.78rem;
   }
 
   strong {
-    font-size: 0.92rem;
+    font-size: 0.86rem;
   }
 `;
 
-export const TempBarTrack = styled.div`
-  width: 100%;
-  height: 11px;
+export const TempColumnTrack = styled.div`
+  width: 34px;
+  height: 110px;
   border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.26);
   background: rgba(255, 255, 255, 0.14);
+  display: flex;
+  align-items: end;
   overflow: hidden;
 `;
 
-export const TempBarFill = styled.div<{ $width: number; $tone: string }>`
-  width: ${({ $width }) => `${$width}%`};
-  height: 100%;
+export const TempColumnFill = styled.div<{ $height: number; $tone: string }>`
+  width: 100%;
+  height: ${({ $height }) => `${$height}%`};
   border-radius: 999px;
   background: ${({ $tone }) => $tone};
+  transition: height 420ms ease;
 `;
 
 export const TodayHighlightItem = styled.div`

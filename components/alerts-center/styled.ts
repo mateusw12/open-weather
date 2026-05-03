@@ -1,5 +1,4 @@
 import styled from "@emotion/styled";
-import Link from "next/link";
 
 export const AlertsShell = styled.main`
   width: min(1100px, 100%);
@@ -8,15 +7,6 @@ export const AlertsShell = styled.main`
   padding: 1rem 1rem 2.2rem;
   display: grid;
   gap: 1rem;
-`;
-
-export const BackLink = styled(Link)`
-  width: fit-content;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.35);
-  background: rgba(255, 255, 255, 0.16);
-  padding: 0.55rem 0.9rem;
-  font-weight: 700;
 `;
 
 export const Hero = styled.section`
@@ -35,6 +25,47 @@ export const Hero = styled.section`
     margin-top: 0.45rem;
     color: rgba(255, 255, 255, 0.9);
   }
+`;
+
+export const SearchRow = styled.form`
+  margin-top: 0.75rem;
+  display: grid;
+  gap: 0.5rem;
+
+  @media (min-width: 640px) {
+    grid-template-columns: 1fr auto;
+  }
+`;
+
+export const SearchInput = styled.input`
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.16);
+  color: #fff;
+  padding: 0.72rem 0.78rem;
+  outline: none;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.74);
+  }
+`;
+
+export const SearchButton = styled.button`
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  padding: 0.72rem 0.95rem;
+  font-weight: 700;
+  cursor: pointer;
+`;
+
+export const StatusText = styled.p`
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.16);
+  padding: 0.7rem 0.85rem;
+  color: rgba(255, 255, 255, 0.92);
 `;
 
 export const List = styled.section`

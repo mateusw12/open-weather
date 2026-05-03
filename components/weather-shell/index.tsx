@@ -35,6 +35,7 @@ import {
   HourlyIcon,
   HourlyItem,
   HourlyScroll,
+  RevealSection,
   SearchButton,
   SearchField,
   SearchRow,
@@ -45,18 +46,18 @@ import {
   Stats,
   SuggestionButton,
   SuggestionList,
-  TodayHighlight,
-  TempBarChart,
-  TempBarFill,
-  TempBarRow,
-  TempBarTrack,
-  TodayHighlightItem,
   SunCycleCard,
   SunCycleHeader,
   SunCycleProgress,
   SunCycleTrack,
   SunMarker,
   SunTimes,
+  TempColumnChart,
+  TempColumnFill,
+  TempColumnItem,
+  TempColumnTrack,
+  TodayHighlight,
+  TodayHighlightItem,
 } from "@/components/weather-shell/styled";
 
 type WeatherShellProps = {
@@ -205,6 +206,28 @@ export function WeatherShell({
   const nowUnix = payload.current.dt;
   const daylightProgress = clamp((nowUnix - sunriseUnix) / (sunsetUnix - sunriseUnix), 0, 1);
   const tempRange = Math.max(1, maxTemp - minTemp);
+
+  useEffect(() => {
+    const nodes = document.querySelectorAll<HTMLElement>("[data-shell-reveal]");
+
+    const observer = new IntersectionObserver(
+      (entries) => {
+        for (const entry of entries) {
+          if (entry.isIntersecting) {
+            entry.target.classList.add("is-visible");
+            observer.unobserve(entry.target);
+          }
+        }
+      },
+      { threshold: 0.14, rootMargin: "0px 0px -8% 0px" },
+    );
+
+    nodes.forEach((node) => observer.observe(node));
+
+    return () => {
+      observer.disconnect();
+    };
+  }, [isLoading, payload.city]);
 
   const fetchWeather = useCallback(
     async (url: string, persistCity = true) => {
@@ -400,102 +423,110 @@ export function WeatherShell({
         </>
       ) : (
         <>
-          <TodayHighlight>
-            <h2>Resumo de hoje</h2>
-            <SunCycleCard>
-              <SunCycleHeader>
-                <span>
-                  <WiSunrise size={22} /> Nascer {sunrise}
-                </span>
-                <span>
-                  <WiSunset size={22} /> Por {sunset}
-                </span>
-              </SunCycleHeader>
+          <RevealSection data-shell-reveal>
+            <TodayHighlight>
+              <h2>Resumo de hoje</h2>
+              <SunCycleCard>
+                <SunCycleHeader>
+                  <span>
+                    <WiSunrise size={22} /> Nascer {sunrise}
+                  </span>
+                  <span>
+                    <WiSunset size={22} /> Por {sunset}
+                  </span>
+                </SunCycleHeader>
 
-              <SunCycleTrack>
-                <SunCycleProgress style={{ width: `${(daylightProgress * 100).toFixed(1)}%` }} />
-                <SunMarker style={{ left: `${(daylightProgress * 100).toFixed(1)}%` }}>
-                  <WiDaySunny size={20} />
-                </SunMarker>
-              </SunCycleTrack>
+                <SunCycleTrack>
+                  <SunCycleProgress style={{ width: `${(daylightProgress * 100).toFixed(1)}%` }} />
+                  <SunMarker style={{ left: `${(daylightProgress * 100).toFixed(1)}%` }}>
+                    <WiDaySunny size={20} />
+                  </SunMarker>
+                </SunCycleTrack>
 
-              <SunTimes>
-                <small>Min {minTemp}°</small>
-                <small>Max {maxTemp}°</small>
-              </SunTimes>
-            </SunCycleCard>
+                <SunTimes>
+                  <small>Min {minTemp}°</small>
+                  <small>Max {maxTemp}°</small>
+                </SunTimes>
+              </SunCycleCard>
 
-            <TempBarChart>
-              {todayBlocks.map((item) => {
-                const temp = Math.round(item.main.temp);
-                const barWidth = 24 + ((temp - minTemp) / tempRange) * 76;
-                const tone = getTempBarTone(temp);
+              <TempColumnChart>
+                {todayBlocks.map((item) => {
+                  const temp = Math.round(item.main.temp);
+                  const barHeight = 18 + ((temp - minTemp) / tempRange) * 82;
+                  const tone = getTempBarTone(temp);
 
-                return (
-                  <TempBarRow key={`temp-${item.dt}`}>
-                    <span>{formatHour(item.dt_txt)}</span>
-                    <TempBarTrack>
-                      <TempBarFill $width={barWidth} $tone={tone} />
-                    </TempBarTrack>
-                    <strong>{temp}°</strong>
-                  </TempBarRow>
-                );
-              })}
-            </TempBarChart>
+                  return (
+                    <TempColumnItem key={`temp-${item.dt}`}>
+                      <small>{formatHour(item.dt_txt)}</small>
+                      <TempColumnTrack>
+                        <TempColumnFill $height={barHeight} $tone={tone} />
+                      </TempColumnTrack>
+                      <strong>{temp}°</strong>
+                    </TempColumnItem>
+                  );
+                })}
+              </TempColumnChart>
 
-            <TodayHighlightItem>
-              <span>Media do periodo</span>
-              <strong>
-                {Math.round(todayBlocks.reduce((sum, item) => sum + item.main.temp, 0) / todayBlocks.length)}°
-              </strong>
-            </TodayHighlightItem>
-          </TodayHighlight>
+              <TodayHighlightItem>
+                <span>Media do periodo</span>
+                <strong>
+                  {Math.round(todayBlocks.reduce((sum, item) => sum + item.main.temp, 0) / todayBlocks.length)}°
+                </strong>
+              </TodayHighlightItem>
+            </TodayHighlight>
+          </RevealSection>
 
-          <Stats>
-            <h2>Resumo rapido</h2>
-            <StatItem>
-              <span>Sensação</span>
-              <strong>{Math.round(payload.current.main.feels_like)}°</strong>
-            </StatItem>
-            <StatItem>
-              <span>Umidade</span>
-              <strong>{payload.current.main.humidity}%</strong>
-            </StatItem>
-            <StatItem>
-              <span>Vento</span>
-              <strong>{payload.current.wind.speed.toFixed(1)} m/s</strong>
-            </StatItem>
-            <StatItem>
-              <span>Pressão</span>
-              <strong>{payload.current.main.pressure} hPa</strong>
-            </StatItem>
-          </Stats>
+          <RevealSection data-shell-reveal>
+            <Stats>
+              <h2>Resumo rapido</h2>
+              <StatItem>
+                <span>Sensação</span>
+                <strong>{Math.round(payload.current.main.feels_like)}°</strong>
+              </StatItem>
+              <StatItem>
+                <span>Umidade</span>
+                <strong>{payload.current.main.humidity}%</strong>
+              </StatItem>
+              <StatItem>
+                <span>Vento</span>
+                <strong>{payload.current.wind.speed.toFixed(1)} m/s</strong>
+              </StatItem>
+              <StatItem>
+                <span>Pressão</span>
+                <strong>{payload.current.main.pressure} hPa</strong>
+              </StatItem>
+            </Stats>
+          </RevealSection>
 
-          <Daily>
-            <h2>Durante a semana</h2>
-            {dailyItems.map((item, index) => (
-              <DailyRow key={item.dt} style={{ ["--delay" as string]: `${index * 70}ms` }}>
-                <DailyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</DailyIcon>
-                <span>{formatDay(item.dt_txt)}</span>
-                <span>{item.weather[0]?.main ?? "Sem dados"}</span>
-                <strong>{Math.round(item.main.temp)}°</strong>
-              </DailyRow>
-            ))}
-          </Daily>
-
-          <Hourly>
-            <h2>Proximas horas</h2>
-            <HourlyScroll>
-              {nextHours.map((item, index) => (
-                <HourlyItem key={item.dt} style={{ ["--delay" as string]: `${index * 55}ms` }}>
-                  <HourlyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</HourlyIcon>
-                  <p>{formatHour(item.dt_txt)}</p>
+          <RevealSection data-shell-reveal>
+            <Daily>
+              <h2>Durante a semana</h2>
+              {dailyItems.map((item, index) => (
+                <DailyRow key={item.dt} style={{ ["--delay" as string]: `${index * 70}ms` }}>
+                  <DailyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</DailyIcon>
+                  <span>{formatDay(item.dt_txt)}</span>
+                  <span>{item.weather[0]?.main ?? "Sem dados"}</span>
                   <strong>{Math.round(item.main.temp)}°</strong>
-                  <p>{item.weather[0]?.main ?? "Sem dados"}</p>
-                </HourlyItem>
+                </DailyRow>
               ))}
-            </HourlyScroll>
-          </Hourly>
+            </Daily>
+          </RevealSection>
+
+          <RevealSection data-shell-reveal>
+            <Hourly>
+              <h2>Proximas horas</h2>
+              <HourlyScroll>
+                {nextHours.map((item, index) => (
+                  <HourlyItem key={item.dt} style={{ ["--delay" as string]: `${index * 55}ms` }}>
+                    <HourlyIcon>{renderWeatherIcon(item.weather[0]?.main ?? "clear", 22)}</HourlyIcon>
+                    <p>{formatHour(item.dt_txt)}</p>
+                    <strong>{Math.round(item.main.temp)}°</strong>
+                    <p>{item.weather[0]?.main ?? "Sem dados"}</p>
+                  </HourlyItem>
+                ))}
+              </HourlyScroll>
+            </Hourly>
+          </RevealSection>
         </>
       )}
     </Shell>
