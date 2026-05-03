@@ -1,6 +1,6 @@
 import { NextResponse } from "next/server";
 import { withProtectedRoute } from "@/libs/auth/route-auth";
-import { WeatherService } from "@/libs/services/weather-service";
+import { WeatherService } from "@/libs/services/weather.service";
 
 export const GET = withProtectedRoute(async (request: Request) => {
   const { searchParams } = new URL(request.url);
