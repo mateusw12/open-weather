@@ -1,66 +1,106 @@
-import Image from "next/image";
-import styles from "./page.module.css";
+import styled from "@emotion/styled";
+import { auth, signOut } from "@/auth";
+import { WeatherShell } from "@/components/weather-shell";
+import { WeatherService } from "@/libs/services/weather-service";
 
-export default function Home() {
+const Page = styled.div`
+  min-height: 100dvh;
+`;
+
+const TopBar = styled.header`
+  width: min(1180px, 100%);
+  margin: 0 auto;
+  padding: 1rem 1rem 0;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+
+  p {
+    color: rgba(234, 244, 255, 0.8);
+    font-size: 0.92rem;
+  }
+
+  button {
+    border: 1px solid rgba(255, 255, 255, 0.24);
+    background: rgba(255, 255, 255, 0.1);
+    color: #eaf4ff;
+    border-radius: 12px;
+    padding: 0.55rem 0.9rem;
+    cursor: pointer;
+    transition: transform 180ms ease-in-out, background 180ms ease-in-out;
+  }
+
+  button:hover {
+    transform: scale(1.02);
+    background: rgba(255, 255, 255, 0.16);
+  }
+`;
+
+const EmptyState = styled.main`
+  width: min(740px, 100%);
+  margin: 2rem auto;
+  padding: 1.4rem;
+  border-radius: 22px;
+  backdrop-filter: blur(12px);
+  background: rgba(255, 255, 255, 0.11);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+
+  h1 {
+    font-size: clamp(1.6rem, 4vw, 2.2rem);
+  }
+
+  p {
+    margin-top: 0.6rem;
+    color: rgba(234, 244, 255, 0.78);
+  }
+`;
+
+export default async function Home() {
+  const session = await auth();
+  const defaultCity = "Sao Paulo";
+  let current = null;
+  let forecast = null;
+  let weatherError: string | null = null;
+
+  if (!session?.user) {
+    return null;
+  }
+
+  try {
+    [current, forecast] = await Promise.all([
+      WeatherService.getCurrentByCity(defaultCity),
+      WeatherService.getForecastByCity(defaultCity),
+    ]);
+  } catch (error) {
+    weatherError = error instanceof Error ? error.message : "Erro desconhecido.";
+  }
+
   return (
-    <div className={styles.page}>
-      <main className={styles.main}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className={styles.intro}>
-          <h1>To get started, edit the page.tsx file.</h1>
+    <Page>
+      <TopBar>
+        <p>Logado como {session.user.email}</p>
+        <form
+          action={async () => {
+            "use server";
+            await signOut({ redirectTo: "/login" });
+          }}
+        >
+          <button type="submit">Sair</button>
+        </form>
+      </TopBar>
+
+      {current && forecast && !weatherError ? (
+        <WeatherShell city={defaultCity} current={current} forecast={forecast} />
+      ) : (
+        <EmptyState>
+          <h1>Configure as variáveis de ambiente</h1>
           <p>
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              Learning
-            </a>{" "}
-            center.
+            Não foi possível buscar dados no OpenWeatherMap. Verifique
+            NEXT_PUBLIC_WEATHER_API_KEY e credenciais OAuth no arquivo .env.local.
           </p>
-        </div>
-        <div className={styles.ctas}>
-          <a
-            className={styles.primary}
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className={styles.logo}
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className={styles.secondary}
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
-      </main>
-    </div>
+          <p>{weatherError ?? "Erro desconhecido."}</p>
+        </EmptyState>
+      )}
+    </Page>
   );
 }
