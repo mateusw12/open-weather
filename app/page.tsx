@@ -1,5 +1,6 @@
 import { getServerSession } from "next-auth";
 import Image from "next/image";
+import Link from "next/link";
 import { authOptions } from "@/auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import { WeatherShell } from "@/components/weather-shell";
@@ -43,7 +44,19 @@ export default async function Home() {
           <Image src="/logo/logo.png" alt="Open Weather logo" width={34} height={34} priority />
           <p>Logado como {session.user.email ?? "usuário"}</p>
         </div>
-        <SignOutButton />
+        <div style={{ display: "flex", alignItems: "center", gap: "0.7rem" }}>
+          <Link
+            href="/about"
+            style={{
+              color: "rgba(110, 198, 189, 0.95)",
+              fontWeight: 600,
+              textDecoration: "none",
+            }}
+          >
+            Sobre
+          </Link>
+          <SignOutButton />
+        </div>
       </header>
 
       {current && forecast && !weatherError ? (

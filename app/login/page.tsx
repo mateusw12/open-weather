@@ -3,6 +3,7 @@
 import styled from "@emotion/styled";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
 import Image from "next/image";
+import Link from "next/link";
 import { signIn } from "next-auth/react";
 
 const Wrapper = styled.main`
@@ -53,6 +54,18 @@ const ProviderList = styled.div`
   gap: 0.75rem;
 `;
 
+const AboutLink = styled(Link)`
+  margin-top: 0.95rem;
+  display: inline-flex;
+  color: rgba(110, 198, 189, 0.95);
+  font-weight: 600;
+  transition: color 180ms ease-in-out;
+
+  &:hover {
+    color: #f2974c;
+  }
+`;
+
 const ProviderButton = styled.button`
   width: 100%;
   border: 1px solid var(--ow-border);
@@ -100,6 +113,8 @@ export default function LoginPage() {
             Continuar com GitHub
           </ProviderButton>
         </ProviderList>
+
+        <AboutLink href="/about">Conhecer a aplicação</AboutLink>
       </Card>
     </Wrapper>
   );

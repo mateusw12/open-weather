@@ -13,6 +13,7 @@ function hasSessionCookie(request: NextRequest) {
 export function proxy(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const isLoginPage = pathname === "/login";
+  const isAboutPage = pathname === "/about";
   const isAuthRoute = pathname.startsWith("/api/auth");
   const isPublicAsset =
     pathname.startsWith("/_next") ||
@@ -29,7 +30,7 @@ export function proxy(request: NextRequest) {
 
   const isAuthenticated = hasSessionCookie(request);
 
-  if (!isAuthenticated && !isLoginPage) {
+  if (!isAuthenticated && !isLoginPage && !isAboutPage) {
     return NextResponse.redirect(new URL("/login", request.url));
   }
 
