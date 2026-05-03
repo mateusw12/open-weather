@@ -55,7 +55,6 @@ export function AboutStory() {
       <TopBar>
         <TopBarGroup>
           <RoundLink href={AppRoute.Home}>Voltar para Home</RoundLink>
-          <RoundLink href={AppRoute.Login}>Login</RoundLink>
         </TopBarGroup>
 
         <BrandChip>
