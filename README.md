@@ -80,12 +80,6 @@ Fluxo:
 3. Build de producao
 4. Deploy para producao
 
-Configure os secrets no GitHub (Settings > Secrets and variables > Actions):
-
-- `VERCEL_TOKEN`
-- `VERCEL_ORG_ID`
-- `VERCEL_PROJECT_ID`
-
 Tambem configure as variaveis de runtime no painel do Vercel (Production), com os mesmos valores do `.env.local` que forem necessarios em servidor e cliente.
 
 ## Observacoes de configuracao
