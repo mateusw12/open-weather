@@ -4,9 +4,9 @@ import styled from "@emotion/styled";
 import { signOut } from "next-auth/react";
 
 const Button = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.1);
-  color: #eaf4ff;
+  border: 1px solid var(--ow-border);
+  background: rgba(33, 69, 125, 0.42);
+  color: var(--ow-text);
   border-radius: 12px;
   padding: 0.55rem 0.9rem;
   cursor: pointer;
@@ -14,7 +14,7 @@ const Button = styled.button`
 
   &:hover {
     transform: scale(1.02);
-    background: rgba(255, 255, 255, 0.16);
+    background: rgba(242, 151, 76, 0.3);
   }
 `;
 

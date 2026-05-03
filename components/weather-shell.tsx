@@ -55,8 +55,8 @@ const Hero = styled.section`
   border-radius: 30px;
   padding: 1.25rem;
   backdrop-filter: blur(18px);
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.24), rgba(255, 255, 255, 0.07));
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(38, 125, 170, 0.44), rgba(33, 69, 125, 0.38));
+  border: 1px solid var(--ow-border);
   box-shadow: 0 12px 45px rgba(7, 20, 37, 0.35);
   animation: enter 420ms ease both;
 
@@ -73,7 +73,7 @@ const Hero = styled.section`
 
   p {
     margin-top: 0.5rem;
-    color: rgba(234, 244, 255, 0.86);
+    color: rgba(238, 247, 255, 0.88);
   }
 
   @keyframes enter {
@@ -105,17 +105,17 @@ const SearchWrap = styled.form`
 
 const SearchField = styled.input`
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.24);
+  border: 1px solid var(--ow-border);
   border-radius: 15px;
-  background: rgba(255, 255, 255, 0.14);
-  color: #eaf4ff;
+  background: rgba(33, 69, 125, 0.42);
+  color: var(--ow-text);
   padding: 0.85rem 2.5rem 0.85rem 0.9rem;
   font-size: 0.95rem;
   outline: none;
   transition: border-color 180ms ease-in-out;
 
   &:focus {
-    border-color: rgba(125, 211, 252, 0.7);
+    border-color: rgba(242, 151, 76, 0.72);
   }
 
   &::placeholder {
@@ -130,14 +130,14 @@ const SearchButton = styled.button`
   transform: translateY(-50%);
   border: 0;
   background: transparent;
-  color: rgba(234, 244, 255, 0.85);
+  color: rgba(110, 198, 189, 0.95);
   cursor: pointer;
 `;
 
 const ActionButton = styled.button`
-  border: 1px solid rgba(255, 255, 255, 0.24);
-  background: rgba(255, 255, 255, 0.13);
-  color: #eaf4ff;
+  border: 1px solid var(--ow-border);
+  background: rgba(33, 69, 125, 0.44);
+  color: var(--ow-text);
   border-radius: 14px;
   padding: 0.8rem 1rem;
   font-weight: 600;
@@ -146,7 +146,7 @@ const ActionButton = styled.button`
 
   &:hover {
     transform: scale(1.02);
-    background: rgba(255, 255, 255, 0.19);
+    background: rgba(38, 125, 170, 0.58);
   }
 
   &:disabled {
@@ -164,15 +164,15 @@ const SuggestionList = styled.ul`
 const SuggestionButton = styled.button`
   width: 100%;
   text-align: left;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--ow-border);
   border-radius: 12px;
-  background: rgba(255, 255, 255, 0.08);
-  color: rgba(234, 244, 255, 0.9);
+  background: rgba(33, 69, 125, 0.36);
+  color: var(--ow-text);
   padding: 0.6rem 0.75rem;
   cursor: pointer;
 
   &:hover {
-    background: rgba(255, 255, 255, 0.14);
+    background: rgba(38, 125, 170, 0.52);
   }
 `;
 
@@ -180,8 +180,8 @@ const Stats = styled.section`
   border-radius: 24px;
   padding: 1.2rem;
   backdrop-filter: blur(14px);
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.16);
+  background: rgba(33, 69, 125, 0.42);
+  border: 1px solid var(--ow-border);
   display: grid;
   gap: 0.7rem;
   animation: enter 440ms ease both;
@@ -190,7 +190,7 @@ const Stats = styled.section`
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.09em;
-    color: rgba(234, 244, 255, 0.72);
+    color: rgba(110, 198, 189, 0.92);
   }
 `;
 
@@ -200,7 +200,7 @@ const StatItem = styled.div`
   align-items: center;
 
   span {
-    color: rgba(234, 244, 255, 0.8);
+    color: rgba(238, 247, 255, 0.84);
   }
 
   strong {
@@ -213,15 +213,15 @@ const Hourly = styled.section`
   border-radius: 24px;
   padding: 1rem;
   backdrop-filter: blur(14px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(33, 69, 125, 0.38);
+  border: 1px solid var(--ow-border);
   animation: enter 460ms ease both;
 
   h2 {
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.09em;
-    color: rgba(234, 244, 255, 0.72);
+    color: rgba(110, 198, 189, 0.9);
     margin-bottom: 0.8rem;
   }
 `;
@@ -241,7 +241,7 @@ const HourlyScroll = styled.div`
   }
 
   &::-webkit-scrollbar-thumb {
-    background: rgba(255, 255, 255, 0.22);
+    background: rgba(110, 198, 189, 0.48);
     border-radius: 999px;
   }
 `;
@@ -249,8 +249,8 @@ const HourlyScroll = styled.div`
 const HourlyItem = styled.article`
   padding: 0.85rem;
   border-radius: 16px;
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.18);
+  background: rgba(33, 69, 125, 0.34);
+  border: 1px solid var(--ow-border);
   scroll-snap-align: start;
   transition: transform 180ms ease-in-out;
 
@@ -260,7 +260,7 @@ const HourlyItem = styled.article`
 
   p {
     font-size: 0.85rem;
-    color: rgba(234, 244, 255, 0.74);
+    color: rgba(238, 247, 255, 0.76);
   }
 
   strong {
@@ -274,8 +274,8 @@ const Daily = styled.section`
   border-radius: 24px;
   padding: 1rem;
   backdrop-filter: blur(14px);
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(33, 69, 125, 0.38);
+  border: 1px solid var(--ow-border);
   display: grid;
   gap: 0.5rem;
 
@@ -283,7 +283,7 @@ const Daily = styled.section`
     font-size: 0.95rem;
     text-transform: uppercase;
     letter-spacing: 0.09em;
-    color: rgba(234, 244, 255, 0.72);
+    color: rgba(110, 198, 189, 0.9);
     margin-bottom: 0.2rem;
   }
 `;
@@ -295,24 +295,24 @@ const DailyRow = styled.div`
   align-items: center;
   border-radius: 12px;
   padding: 0.5rem 0.7rem;
-  background: rgba(255, 255, 255, 0.08);
+  background: rgba(38, 125, 170, 0.46);
 `;
 
 const ErrorMessage = styled.p`
   margin-top: 0.7rem;
-  color: #fee2e2;
+  color: #ffd4b3;
 `;
 
 const SkeletonCard = styled.div`
   border-radius: 24px;
   min-height: 130px;
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  border: 1px solid var(--ow-border);
   background:
     linear-gradient(
       100deg,
-      rgba(255, 255, 255, 0.09) 22%,
-      rgba(255, 255, 255, 0.24) 42%,
-      rgba(255, 255, 255, 0.08) 62%
+      rgba(33, 69, 125, 0.42) 22%,
+      rgba(71, 175, 197, 0.52) 42%,
+      rgba(38, 125, 170, 0.36) 62%
     );
   background-size: 220% 100%;
   animation: shimmer 1.2s linear infinite;
@@ -341,14 +341,14 @@ function mapAtmosphere(main: string) {
   const key = main.toLowerCase();
 
   if (key.includes("rain") || key.includes("drizzle") || key.includes("thunderstorm")) {
-    return "radial-gradient(circle at 18% 22%, rgba(77, 169, 255, 0.4), transparent 38%), radial-gradient(circle at 80% 16%, rgba(123, 92, 255, 0.36), transparent 48%), linear-gradient(165deg, rgba(14, 26, 49, 0.94), rgba(12, 32, 65, 0.9))";
+    return "radial-gradient(circle at 18% 22%, rgba(38, 125, 170, 0.46), transparent 38%), radial-gradient(circle at 80% 16%, rgba(71, 175, 197, 0.34), transparent 48%), linear-gradient(165deg, rgba(22, 52, 96, 0.94), rgba(33, 69, 125, 0.9))";
   }
 
   if (key.includes("cloud")) {
-    return "radial-gradient(circle at 16% 22%, rgba(126, 178, 214, 0.34), transparent 36%), radial-gradient(circle at 80% 12%, rgba(228, 238, 255, 0.2), transparent 44%), linear-gradient(160deg, rgba(19, 37, 59, 0.95), rgba(30, 62, 96, 0.88))";
+    return "radial-gradient(circle at 16% 22%, rgba(71, 175, 197, 0.32), transparent 36%), radial-gradient(circle at 80% 12%, rgba(110, 198, 189, 0.28), transparent 44%), linear-gradient(160deg, rgba(25, 55, 102, 0.95), rgba(33, 69, 125, 0.9))";
   }
 
-  return "radial-gradient(circle at 12% 24%, rgba(64, 181, 252, 0.42), transparent 40%), radial-gradient(circle at 80% 14%, rgba(252, 211, 77, 0.35), transparent 46%), linear-gradient(165deg, rgba(18, 43, 74, 0.92), rgba(16, 39, 68, 0.9))";
+  return "radial-gradient(circle at 12% 24%, rgba(71, 175, 197, 0.44), transparent 40%), radial-gradient(circle at 80% 14%, rgba(242, 151, 76, 0.24), transparent 46%), linear-gradient(165deg, rgba(33, 69, 125, 0.92), rgba(38, 125, 170, 0.88))";
 }
 
 function getDailyItems(list: ForecastListItemDto[]) {

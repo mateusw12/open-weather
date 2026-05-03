@@ -1,4 +1,5 @@
 import { getServerSession } from "next-auth";
+import Image from "next/image";
 import { authOptions } from "@/auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import { WeatherShell } from "@/components/weather-shell";
@@ -34,11 +35,14 @@ export default async function Home() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
-          color: "rgba(234, 244, 255, 0.8)",
+          color: "rgba(238, 247, 255, 0.84)",
           fontSize: "0.92rem",
         }}
       >
-        <p>Logado como {session.user.email ?? "usuário"}</p>
+        <div style={{ display: "flex", alignItems: "center", gap: "0.65rem" }}>
+          <Image src="/logo/logo.png" alt="Open Weather logo" width={34} height={34} priority />
+          <p>Logado como {session.user.email ?? "usuário"}</p>
+        </div>
         <SignOutButton />
       </header>
 
@@ -56,8 +60,8 @@ export default async function Home() {
             padding: "1.4rem",
             borderRadius: "22px",
             backdropFilter: "blur(12px)",
-            background: "rgba(255, 255, 255, 0.11)",
-            border: "1px solid rgba(255, 255, 255, 0.18)",
+            background: "linear-gradient(145deg, var(--ow-card-strong), var(--ow-card))",
+            border: "1px solid var(--ow-border)",
           }}
         >
           <h1>Configure as variáveis de ambiente</h1>

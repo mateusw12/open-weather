@@ -2,6 +2,7 @@
 
 import styled from "@emotion/styled";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
+import Image from "next/image";
 import { signIn } from "next-auth/react";
 
 const Wrapper = styled.main`
@@ -15,10 +16,14 @@ const Card = styled.section`
   width: min(460px, 100%);
   padding: 1.4rem;
   border-radius: 26px;
-  background: rgba(255, 255, 255, 0.12);
-  border: 1px solid rgba(255, 255, 255, 0.2);
+  background: linear-gradient(145deg, var(--ow-card-strong), var(--ow-card));
+  border: 1px solid var(--ow-border);
   backdrop-filter: blur(16px);
   box-shadow: 0 12px 45px rgba(7, 20, 37, 0.35);
+
+  @media (min-width: 768px) {
+    padding: 1.8rem;
+  }
 
   h1 {
     font-size: clamp(1.8rem, 6vw, 2.4rem);
@@ -27,7 +32,18 @@ const Card = styled.section`
 
   p {
     margin-top: 0.5rem;
-    color: rgba(234, 244, 255, 0.75);
+    color: rgba(238, 247, 255, 0.78);
+  }
+`;
+
+const Brand = styled.div`
+  display: flex;
+  align-items: center;
+  gap: 0.85rem;
+
+  img {
+    border-radius: 12px;
+    border: 1px solid var(--ow-border);
   }
 `;
 
@@ -39,10 +55,10 @@ const ProviderList = styled.div`
 
 const ProviderButton = styled.button`
   width: 100%;
-  border: 1px solid rgba(255, 255, 255, 0.22);
+  border: 1px solid var(--ow-border);
   border-radius: 15px;
-  background: rgba(255, 255, 255, 0.1);
-  color: #eaf4ff;
+  background: rgba(33, 69, 125, 0.38);
+  color: var(--ow-text);
   padding: 0.9rem 1rem;
   font-weight: 600;
   display: inline-flex;
@@ -54,7 +70,7 @@ const ProviderButton = styled.button`
 
   &:hover {
     transform: scale(1.02);
-    background: rgba(255, 255, 255, 0.18);
+    background: rgba(38, 125, 170, 0.44);
   }
 `;
 
@@ -62,7 +78,10 @@ export default function LoginPage() {
   return (
     <Wrapper>
       <Card>
-        <h1>Open Weather</h1>
+        <Brand>
+          <Image src="/logo/logo.png" alt="Open Weather logo" width={56} height={56} priority />
+          <h1>Open Weather</h1>
+        </Brand>
         <p>Entre com sua conta para acessar uma previsão com visual imersivo.</p>
 
         <ProviderList>
