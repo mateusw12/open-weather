@@ -1,21 +1,16 @@
-import { getServerSession } from "next-auth";
 import Image from "next/image";
 import Link from "next/link";
-import { authOptions } from "@/auth";
+import type { AuthenticatedSession } from "@/libs/auth/route-auth";
+import { withProtectedPage } from "@/libs/auth/route-auth";
 import { SignOutButton } from "@/components/sign-out-button";
 import { WeatherShell } from "@/components/weather-shell";
 import { WeatherService } from "@/libs/services/weather-service";
 
-export default async function Home() {
-  const session = await getServerSession(authOptions);
+async function HomePage(session: AuthenticatedSession) {
   const defaultCity = "Sao Paulo";
   let current = null;
   let forecast = null;
   let weatherError: string | null = null;
-
-  if (!session?.user) {
-    return null;
-  }
 
   try {
     [current, forecast] = await Promise.all([
@@ -88,3 +83,5 @@ export default async function Home() {
     </div>
   );
 }
+
+export default withProtectedPage(HomePage);

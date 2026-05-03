@@ -1,7 +1,8 @@
 import { NextResponse } from "next/server";
+import { withProtectedRoute } from "@/libs/auth/route-auth";
 import { WeatherService } from "@/libs/services/weather-service";
 
-export async function GET(request: Request) {
+export const GET = withProtectedRoute(async (request: Request) => {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get("query")?.trim();
 
@@ -21,4 +22,4 @@ export async function GET(request: Request) {
       { status: 500 },
     );
   }
-}
+});

@@ -30,7 +30,7 @@ npm run dev
 ## O que ja foi implementado
 
 - Login obrigatorio com NextAuth (Google e GitHub)
-- Middleware de protecao de rotas
+- Guards de autenticacao por rota (HOC server-side)
 - Integracao com OpenWeather para clima atual e previsao 5 dias/3h
 - Busca por cidade com sugestoes
 - Botao de geolocalizacao
