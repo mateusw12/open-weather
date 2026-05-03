@@ -63,7 +63,7 @@ function mapAtmosphere(main: string) {
     return "radial-gradient(circle at 16% 22%, rgba(71, 175, 197, 0.32), transparent 36%), radial-gradient(circle at 80% 12%, rgba(110, 198, 189, 0.28), transparent 44%), linear-gradient(160deg, rgba(25, 55, 102, 0.95), rgba(33, 69, 125, 0.9))";
   }
 
-  return "radial-gradient(circle at 12% 24%, rgba(71, 175, 197, 0.44), transparent 40%), radial-gradient(circle at 80% 14%, rgba(242, 151, 76, 0.24), transparent 46%), linear-gradient(165deg, rgba(33, 69, 125, 0.92), rgba(38, 125, 170, 0.88))";
+  return "radial-gradient(circle at 12% 20%, rgba(255, 215, 128, 0.55), transparent 34%), radial-gradient(circle at 82% 18%, rgba(131, 190, 255, 0.42), transparent 42%), linear-gradient(162deg, rgba(97, 146, 235, 0.9), rgba(93, 111, 226, 0.82))";
 }
 
 function getDailyItems(list: ForecastListItemDto[]) {
@@ -109,6 +109,7 @@ export function WeatherShell({
   const requestIdRef = useRef(0);
 
   const atmosphere = mapAtmosphere(payload.current.weather[0]?.main ?? "clear");
+  const currentDescription = payload.current.weather[0]?.description ?? "Condicao indisponivel";
 
   const nextHours = payload.forecast.list.slice(0, 10);
   const dailyItems = getDailyItems(payload.forecast.list);
@@ -226,9 +227,10 @@ export function WeatherShell({
   return (
     <Shell $atmosphere={atmosphere}>
       <Hero>
+        <p>Agora em {payload.city}</p>
         <h1>{Math.round(payload.current.main.temp)}°</h1>
-        <p>{payload.city}</p>
-        <p>{payload.current.weather[0]?.description ?? "Condição indisponível"}</p>
+        <p>{currentDescription}</p>
+        <p>Sensacao termica de {Math.round(payload.current.main.feels_like)}°</p>
 
         <SearchRow>
           <SearchWrap
@@ -240,7 +242,7 @@ export function WeatherShell({
             <SearchField
               value={query}
               onChange={(event) => setQuery(event.target.value)}
-              placeholder="Busque uma cidade"
+              placeholder="Para onde vamos? Busque uma cidade"
               aria-label="Buscar cidade"
             />
             <SearchButton type="submit" aria-label="Pesquisar">
@@ -268,11 +270,11 @@ export function WeatherShell({
           </SearchWrap>
 
           <ActionButton type="button" onClick={() => void searchByCity(query)} disabled={isLoading}>
-            Pesquisar
+            Ver clima
           </ActionButton>
 
           <ActionButton type="button" onClick={searchByCurrentLocation} disabled={isLocating}>
-            {isLocating ? "Buscando localização..." : "Usar minha localização"}
+            {isLocating ? "Buscando localizacao..." : "Usar minha localizacao"}
           </ActionButton>
         </SearchRow>
 
@@ -288,7 +290,7 @@ export function WeatherShell({
       ) : (
         <>
           <Stats>
-            <h2>Agora</h2>
+            <h2>Resumo rapido</h2>
             <StatItem>
               <span>Sensação</span>
               <strong>{Math.round(payload.current.main.feels_like)}°</strong>
@@ -308,7 +310,7 @@ export function WeatherShell({
           </Stats>
 
           <Daily>
-            <h2>Próximos dias</h2>
+            <h2>Proximos dias</h2>
             {dailyItems.map((item) => (
               <DailyRow key={item.dt}>
                 <span>{formatDay(item.dt_txt)}</span>
@@ -319,7 +321,7 @@ export function WeatherShell({
           </Daily>
 
           <Hourly>
-            <h2>Próximas horas</h2>
+            <h2>Proximas horas</h2>
             <HourlyScroll>
               {nextHours.map((item) => (
                 <HourlyItem key={item.dt}>
