@@ -220,6 +220,106 @@ export const TodayHighlight = styled.section`
   }
 `;
 
+export const SunCycleCard = styled.div`
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  background: rgba(255, 255, 255, 0.14);
+  padding: 0.65rem;
+`;
+
+export const SunCycleHeader = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.6rem;
+  font-size: 0.83rem;
+
+  span {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.2rem;
+    color: rgba(255, 255, 255, 0.94);
+  }
+`;
+
+export const SunCycleTrack = styled.div`
+  position: relative;
+  margin-top: 0.6rem;
+  height: 12px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  background: rgba(183, 220, 255, 0.22);
+`;
+
+export const SunCycleProgress = styled.div`
+  height: 100%;
+  border-radius: 999px;
+  background: linear-gradient(90deg, rgba(255, 216, 138, 0.8), rgba(255, 159, 99, 0.92));
+`;
+
+export const SunMarker = styled.div`
+  position: absolute;
+  top: 50%;
+  transform: translate(-50%, -50%);
+  width: 22px;
+  height: 22px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.42);
+  background: rgba(255, 238, 198, 0.88);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #ba611e;
+`;
+
+export const SunTimes = styled.div`
+  margin-top: 0.55rem;
+  display: flex;
+  justify-content: space-between;
+
+  small {
+    color: rgba(255, 255, 255, 0.86);
+    font-size: 0.76rem;
+  }
+`;
+
+export const TempBarChart = styled.div`
+  display: grid;
+  gap: 0.45rem;
+`;
+
+export const TempBarRow = styled.div`
+  display: grid;
+  grid-template-columns: 54px 1fr auto;
+  gap: 0.55rem;
+  align-items: center;
+
+  span {
+    color: rgba(255, 255, 255, 0.88);
+    font-size: 0.82rem;
+  }
+
+  strong {
+    font-size: 0.92rem;
+  }
+`;
+
+export const TempBarTrack = styled.div`
+  width: 100%;
+  height: 11px;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.26);
+  background: rgba(255, 255, 255, 0.14);
+  overflow: hidden;
+`;
+
+export const TempBarFill = styled.div<{ $width: number; $tone: string }>`
+  width: ${({ $width }) => `${$width}%`};
+  height: 100%;
+  border-radius: 999px;
+  background: ${({ $tone }) => $tone};
+`;
+
 export const TodayHighlightItem = styled.div`
   display: flex;
   justify-content: space-between;

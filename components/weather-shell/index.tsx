@@ -2,6 +2,7 @@
 
 import { MagnifyingGlassIcon } from "@radix-ui/react-icons";
 import { useCallback, useEffect, useRef, useState } from "react";
+import { WiDaySunny, WiSunrise, WiSunset } from "react-icons/wi";
 import { useWeatherStorage } from "@/hooks/use-weather-storage";
 import type {
   CurrentWeatherDto,
@@ -29,7 +30,17 @@ import {
   SuggestionButton,
   SuggestionList,
   TodayHighlight,
+  TempBarChart,
+  TempBarFill,
+  TempBarRow,
+  TempBarTrack,
   TodayHighlightItem,
+  SunCycleCard,
+  SunCycleHeader,
+  SunCycleProgress,
+  SunCycleTrack,
+  SunMarker,
+  SunTimes,
 } from "@/components/weather-shell/styled";
 
 type WeatherShellProps = {
@@ -99,6 +110,22 @@ function cityLabel(city: GeocodingCityDto) {
   return parts.join(", ");
 }
 
+function getTempBarTone(temp: number) {
+  if (temp <= 10) {
+    return "linear-gradient(90deg, #8fd6ff, #c9f0ff)";
+  }
+
+  if (temp >= 30) {
+    return "linear-gradient(90deg, #ffb06c, #ff824d)";
+  }
+
+  return "linear-gradient(90deg, #9dd6ff, #ffd787)";
+}
+
+function clamp(value: number, min: number, max: number) {
+  return Math.min(max, Math.max(min, value));
+}
+
 export function WeatherShell({
   initialCity,
   initialCurrent,
@@ -127,6 +154,11 @@ export function WeatherShell({
   const maxTemp = Math.round(Math.max(...todayBlocks.map((item) => item.main.temp)));
   const sunrise = formatTime(payload.forecast.city.sunrise, payload.forecast.city.timezone);
   const sunset = formatTime(payload.forecast.city.sunset, payload.forecast.city.timezone);
+  const sunriseUnix = payload.forecast.city.sunrise;
+  const sunsetUnix = payload.forecast.city.sunset;
+  const nowUnix = payload.current.dt;
+  const daylightProgress = clamp((nowUnix - sunriseUnix) / (sunsetUnix - sunriseUnix), 0, 1);
+  const tempRange = Math.max(1, maxTemp - minTemp);
 
   const fetchWeather = useCallback(
     async (url: string, persistCity = true) => {
@@ -305,21 +337,52 @@ export function WeatherShell({
         <>
           <TodayHighlight>
             <h2>Resumo de hoje</h2>
+            <SunCycleCard>
+              <SunCycleHeader>
+                <span>
+                  <WiSunrise size={22} /> Nascer {sunrise}
+                </span>
+                <span>
+                  <WiSunset size={22} /> Por {sunset}
+                </span>
+              </SunCycleHeader>
+
+              <SunCycleTrack>
+                <SunCycleProgress style={{ width: `${(daylightProgress * 100).toFixed(1)}%` }} />
+                <SunMarker style={{ left: `${(daylightProgress * 100).toFixed(1)}%` }}>
+                  <WiDaySunny size={20} />
+                </SunMarker>
+              </SunCycleTrack>
+
+              <SunTimes>
+                <small>Min {minTemp}°</small>
+                <small>Max {maxTemp}°</small>
+              </SunTimes>
+            </SunCycleCard>
+
+            <TempBarChart>
+              {todayBlocks.map((item) => {
+                const temp = Math.round(item.main.temp);
+                const barWidth = 24 + ((temp - minTemp) / tempRange) * 76;
+                const tone = getTempBarTone(temp);
+
+                return (
+                  <TempBarRow key={`temp-${item.dt}`}>
+                    <span>{formatHour(item.dt_txt)}</span>
+                    <TempBarTrack>
+                      <TempBarFill $width={barWidth} $tone={tone} />
+                    </TempBarTrack>
+                    <strong>{temp}°</strong>
+                  </TempBarRow>
+                );
+              })}
+            </TempBarChart>
+
             <TodayHighlightItem>
-              <span>Nascer do sol</span>
-              <strong>{sunrise}</strong>
-            </TodayHighlightItem>
-            <TodayHighlightItem>
-              <span>Por do sol</span>
-              <strong>{sunset}</strong>
-            </TodayHighlightItem>
-            <TodayHighlightItem>
-              <span>Minima</span>
-              <strong>{minTemp}°</strong>
-            </TodayHighlightItem>
-            <TodayHighlightItem>
-              <span>Maxima</span>
-              <strong>{maxTemp}°</strong>
+              <span>Media do periodo</span>
+              <strong>
+                {Math.round(todayBlocks.reduce((sum, item) => sum + item.main.temp, 0) / todayBlocks.length)}°
+              </strong>
             </TodayHighlightItem>
           </TodayHighlight>
 
