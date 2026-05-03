@@ -1,6 +1,8 @@
+"use client";
+
 import styled from "@emotion/styled";
 import { GitHubLogoIcon } from "@radix-ui/react-icons";
-import { signIn } from "@/auth";
+import { signIn } from "next-auth/react";
 
 const Wrapper = styled.main`
   min-height: 100dvh;
@@ -57,16 +59,6 @@ const ProviderButton = styled.button`
 `;
 
 export default function LoginPage() {
-  async function signInWithGoogle() {
-    "use server";
-    await signIn("google", { redirectTo: "/" });
-  }
-
-  async function signInWithGithub() {
-    "use server";
-    await signIn("github", { redirectTo: "/" });
-  }
-
   return (
     <Wrapper>
       <Card>
@@ -74,16 +66,20 @@ export default function LoginPage() {
         <p>Entre com sua conta para acessar uma previsão com visual imersivo.</p>
 
         <ProviderList>
-          <form action={signInWithGoogle}>
-            <ProviderButton type="submit">Continuar com Google</ProviderButton>
-          </form>
+          <ProviderButton
+            type="button"
+            onClick={() => void signIn("google", { callbackUrl: "/" })}
+          >
+            Continuar com Google
+          </ProviderButton>
 
-          <form action={signInWithGithub}>
-            <ProviderButton type="submit">
-              <GitHubLogoIcon width={18} height={18} />
-              Continuar com GitHub
-            </ProviderButton>
-          </form>
+          <ProviderButton
+            type="button"
+            onClick={() => void signIn("github", { callbackUrl: "/" })}
+          >
+            <GitHubLogoIcon width={18} height={18} />
+            Continuar com GitHub
+          </ProviderButton>
         </ProviderList>
       </Card>
     </Wrapper>
