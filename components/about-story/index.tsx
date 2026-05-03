@@ -1,11 +1,9 @@
 "use client";
 
-import Image from "next/image";
 import { useEffect } from "react";
 import { AppRoute } from "@/libs/enums/app-route.enum";
 import {
   AboutShell,
-  BrandChip,
   Cta,
   CtaActions,
   CtaPrimary,
@@ -18,12 +16,9 @@ import {
   HeroBubble,
   HeroVisual,
   Reveal,
-  RoundLink,
   Showcase,
   Tone,
   ToneGrid,
-  TopBar,
-  TopBarGroup,
   ValueCard,
 } from "@/components/about-story/styled";
 
@@ -52,20 +47,6 @@ export function AboutStory() {
 
   return (
     <AboutShell>
-      <TopBar>
-        <TopBarGroup>
-          <RoundLink href={AppRoute.Home}>Voltar para Home</RoundLink>
-        </TopBarGroup>
-
-        <BrandChip>
-          <Image src="/logo/logo.png" alt="Open Weather logo" width={30} height={30} priority />
-          <div>
-            <p>Open Weather</p>
-            <p>Sobre o aplicativo</p>
-          </div>
-        </BrandChip>
-      </TopBar>
-
       <Reveal data-reveal>
         <Hero>
           <h1>Seu clima, de um jeito simples</h1>

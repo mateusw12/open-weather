@@ -62,7 +62,7 @@ export function TopBar({ userEmail, showSignOut = false }: TopBarProps) {
         <Link href={AppRoute.Home} style={navLinkStyle}>
           Home
         </Link>
-        <Link href={AppRoute.Today} style={navLinkStyle}>
+        <Link href={AppRoute.Home} style={navLinkStyle}>
           Hoje
         </Link>
         <Link href={AppRoute.Alerts} style={navLinkStyle}>

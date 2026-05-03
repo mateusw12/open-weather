@@ -202,6 +202,42 @@ export const Stats = styled.section`
   }
 `;
 
+export const TodayHighlight = styled.section`
+  border-radius: 28px;
+  padding: 1.05rem;
+  backdrop-filter: blur(12px);
+  background: linear-gradient(145deg, rgba(255, 228, 176, 0.22), rgba(180, 209, 255, 0.14));
+  border: 1px solid rgba(255, 255, 255, 0.34);
+  display: grid;
+  gap: 0.62rem;
+  animation: enter 430ms ease both;
+
+  h2 {
+    font-size: 0.95rem;
+    text-transform: uppercase;
+    letter-spacing: 0.09em;
+    color: rgba(255, 245, 223, 0.96);
+  }
+`;
+
+export const TodayHighlightItem = styled.div`
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 0.7rem;
+  border-radius: 13px;
+  padding: 0.5rem 0.62rem;
+  background: rgba(255, 255, 255, 0.16);
+
+  span {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  strong {
+    font-size: 1.02rem;
+  }
+`;
+
 export const StatItem = styled.div`
   display: flex;
   justify-content: space-between;

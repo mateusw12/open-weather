@@ -28,6 +28,8 @@ import {
   Stats,
   SuggestionButton,
   SuggestionList,
+  TodayHighlight,
+  TodayHighlightItem,
 } from "@/components/weather-shell/styled";
 
 type WeatherShellProps = {
@@ -50,6 +52,13 @@ function formatHour(dtTxt: string) {
 function formatDay(dtTxt: string) {
   const date = new Date(dtTxt.replace(" ", "T"));
   return new Intl.DateTimeFormat("pt-BR", { weekday: "short" }).format(date);
+}
+
+function formatTime(unix: number, timezoneSeconds: number) {
+  const date = new Date((unix + timezoneSeconds) * 1000);
+  const hours = String(date.getUTCHours()).padStart(2, "0");
+  const minutes = String(date.getUTCMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
 }
 
 function mapAtmosphere(main: string) {
@@ -113,6 +122,11 @@ export function WeatherShell({
 
   const nextHours = payload.forecast.list.slice(0, 10);
   const dailyItems = getDailyItems(payload.forecast.list);
+  const todayBlocks = payload.forecast.list.slice(0, 8);
+  const minTemp = Math.round(Math.min(...todayBlocks.map((item) => item.main.temp)));
+  const maxTemp = Math.round(Math.max(...todayBlocks.map((item) => item.main.temp)));
+  const sunrise = formatTime(payload.forecast.city.sunrise, payload.forecast.city.timezone);
+  const sunset = formatTime(payload.forecast.city.sunset, payload.forecast.city.timezone);
 
   const fetchWeather = useCallback(
     async (url: string, persistCity = true) => {
@@ -289,6 +303,26 @@ export function WeatherShell({
         </>
       ) : (
         <>
+          <TodayHighlight>
+            <h2>Resumo de hoje</h2>
+            <TodayHighlightItem>
+              <span>Nascer do sol</span>
+              <strong>{sunrise}</strong>
+            </TodayHighlightItem>
+            <TodayHighlightItem>
+              <span>Por do sol</span>
+              <strong>{sunset}</strong>
+            </TodayHighlightItem>
+            <TodayHighlightItem>
+              <span>Minima</span>
+              <strong>{minTemp}°</strong>
+            </TodayHighlightItem>
+            <TodayHighlightItem>
+              <span>Maxima</span>
+              <strong>{maxTemp}°</strong>
+            </TodayHighlightItem>
+          </TodayHighlight>
+
           <Stats>
             <h2>Resumo rapido</h2>
             <StatItem>
